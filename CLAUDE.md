@@ -57,17 +57,16 @@ FernanClient client = FernanClient.builder()
         .build();
 ```
 
-Call `client.shutdown()` on application exit to release the virtual-thread executor.
+Call `client.shutdown()` on application exit to release the internal executor
+(safe no-op if you supplied your own via `.executor(...)`).
 
-## Async patterns
+## Async and threading
 
-All methods are non-blocking. Pick the pattern that fits your call site:
+All endpoints return `CompletableFuture<T>`. **Default to chaining**, not
+`.join()`:
 
 ```java
-// Blocking join (fine for CLI / scripts / sync code paths):
-User me = client.user().me().join();
-
-// Continuation:
+// The default — chained continuation:
 client.user().me().thenAccept(user -> render(user));
 
 // With error handling:
@@ -76,9 +75,68 @@ client.store().purchase(1, 5, ReferralChoice.none())
     .exceptionally(t -> { onFailure(t); return null; });
 ```
 
-If you need to marshal the result back onto a specific thread (UI thread, game
-tick thread, etc.) wrap it in your runtime's executor: e.g.
-`.thenAcceptAsync(handler, gameThread)`.
+### Don't use `.join()` outside CLI/script contexts
+
+`CompletableFuture.join()` blocks the calling thread and wraps any
+`FernanException` in `CompletionException`. That is fine in a 20-line
+script. It is **not** fine on a game tick thread, render thread, Netty
+event loop, JavaFX/Swing event dispatch thread, or any single-threaded
+host-application loop. Use `.thenAccept` / `.exceptionally` / `.handle`
+instead.
+
+### Marshal onto your own thread when needed
+
+If the host application has a specific thread for UI / world updates / game
+ticks, marshal the result onto it with `.thenAcceptAsync(handler, yourExecutor)`:
+
+```java
+client.user().me().thenAcceptAsync(user -> render(user), uiThread);
+```
+
+### The executor handoff gotcha
+
+Continuations attached via `.thenApply` / `.thenAccept` (without the `Async`
+variant) run on the thread that completed the future, which for HTTP
+responses is the transport's executor. If a continuation does heavy work,
+it consumes a transport thread and starves subsequent requests.
+
+Two ways to avoid this:
+
+1. **Pass your own executor when building the client:**
+
+   ```java
+   ExecutorService myPool = Executors.newFixedThreadPool(8);
+   FernanClient client = FernanClient.builder()
+           .apiKey(key)
+           .executor(myPool)
+           .build();
+   // myPool is now used for HttpClient async work AND continuations.
+   // YOU own myPool's lifecycle — client.shutdown() will NOT shut it down.
+   ```
+
+2. **Use `.thenApplyAsync(fn, yourExecutor)` for non-trivial work:**
+
+   ```java
+   client.store().getStock()
+       .thenApplyAsync(this::renderToImage, renderPool);
+   ```
+
+### API key rotation
+
+When `regenerateApiKey()` is called, the client's stored key is updated
+synchronously when the response arrives — subsequent requests use the new
+key without rebuilding the client. Register a listener at build time to be
+notified (useful for persisting the key to disk, a vault, etc.):
+
+```java
+FernanClient client = FernanClient.builder()
+        .apiKey(loadKey())
+        .onApiKeyChange(newKey -> persistKey(newKey))
+        .build();
+
+client.user().regenerateApiKey()
+        .thenAccept(k -> log.info("rotated to " + k));   // also fires onApiKeyChange
+```
 
 ## Error handling
 

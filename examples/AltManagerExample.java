@@ -2,30 +2,34 @@ import club.fernan.api.FernanClient;
 import club.fernan.api.exception.ErrorType;
 import club.fernan.api.exception.FernanException;
 import club.fernan.api.model.referral.ReferralChoice;
-import club.fernan.api.model.referral.ReferralValidation;
 import club.fernan.api.model.store.Product;
-import club.fernan.api.model.store.Purchase;
 import club.fernan.api.model.store.PurchasedAccount;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Canonical reference for wiring this library into a client's alt-storage layer.
  *
  * <p>Defines a tiny {@link AltStore} interface representing whatever your host
- * application uses to remember credentials. Walks through the typical flow:
+ * application uses to remember credentials. Walks through the typical flow
+ * with proper async chaining (no {@code .join()} in business logic):
  *
  * <ol>
  *   <li>List available stock for the user.</li>
- *   <li>Ask the user which referral code (if any) to apply.</li>
- *   <li>Validate the referral code so the user sees the discount before paying.</li>
+ *   <li>Ask the user which referral code (if any) to apply, validating the
+ *       chosen code asynchronously.</li>
  *   <li>Issue the purchase.</li>
- *   <li>For each delivered account, decode the session blob and register it with
- *       your alt store.</li>
+ *   <li>For each delivered account, decode the session blob and register it
+ *       with your alt store.</li>
  * </ol>
  *
- * <p>This file is illustrative — drop the pieces you need into your real app
- * rather than copying it whole.
+ * <p>The {@link CountDownLatch} at the bottom is purely so this {@code main}
+ * doesn't return before the async chain completes. In a real host application
+ * (mod, launcher, etc.), the host's own event loop keeps the process alive
+ * and you do not need a latch.
  */
 public final class AltManagerExample {
 
@@ -37,7 +41,7 @@ public final class AltManagerExample {
         void register(String username, String uuid, String sessionBlob);
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         FernanClient client = FernanClient.builder()
                 .apiKey(System.getenv("FERNAN_KEY"))
                 .userAgent("my-mod/1.0")
@@ -45,61 +49,63 @@ public final class AltManagerExample {
                 .build();
 
         AltStore altStore = (u, id, blob) -> System.out.println("Stored " + u + " (" + id + ")");
+        CountDownLatch done = new CountDownLatch(1);
 
-        try {
-            // 1. Browse stock.
-            List<Product> stock = client.store().getStock().join();
-            Product chosen = stock.stream()
-                    .filter(Product::inStock)
-                    .findFirst()
-                    .orElseThrow(() -> new IllegalStateException("No stock available"));
-            System.out.println("Buying: " + chosen.productName() + " @ " + chosen.price());
+        // 1. Browse stock, 2. resolve referral choice, 3. purchase, 4. register accounts.
+        client.store()
+                .getStock()
+                .thenCompose(stock -> {
+                    Product chosen = stock.stream()
+                            .filter(Product::inStock)
+                            .findFirst()
+                            .orElseThrow(() -> new IllegalStateException("No stock available"));
+                    System.out.println("Buying: " + chosen.productName() + " @ " + chosen.price());
 
-            // 2. Build the referral choice. NEVER default this silently;
-            //    your UI must surface it to the user.
-            ReferralChoice referral = promptForReferralChoice(client);
+                    return resolveReferralChoice(client).thenCompose(referral -> {
+                        int quantity = 1;
+                        return client.store().purchase(chosen.productId(), quantity, referral);
+                    });
+                })
+                .thenAccept(result -> {
+                    for (PurchasedAccount account : result.products()) {
+                        altStore.register(account.username(), account.formattedUuid(), account.decodedData());
+                    }
+                    System.out.println("Delivered " + result.deliveredAmount() + "/" + result.requestedAmount());
+                })
+                .exceptionally(t -> {
+                    handleFailure(t);
+                    return null;
+                })
+                .whenComplete((__, ___) -> {
+                    client.shutdown();
+                    done.countDown();
+                });
 
-            // 3. Issue the purchase.
-            int quantity = 1;
-            Purchase result = client.store()
-                    .purchase(chosen.productId(), quantity, referral)
-                    .join();
-
-            // 4. Hand off each delivered account to the host's alt store.
-            for (PurchasedAccount account : result.products()) {
-                altStore.register(account.username(), account.formattedUuid(), account.decodedData());
-            }
-
-            System.out.println(
-                    "Delivered " + result.deliveredAmount() + "/" + result.requestedAmount());
-        } catch (CompletionException ce) {
-            handleFailure(ce);
-        } finally {
-            client.shutdown();
-        }
+        done.await(30, TimeUnit.SECONDS);
     }
 
     /**
-     * Stand-in for whatever your host UI uses to ask the user. In a real app
-     * this opens a dialog and waits for input; here we just demonstrate the
-     * validation flow.
+     * Resolve the user's referral choice asynchronously. In a real host UI this
+     * opens a dialog and waits for input; here we read an env var and validate
+     * it before applying.
      */
-    private static ReferralChoice promptForReferralChoice(FernanClient client) {
+    private static CompletableFuture<ReferralChoice> resolveReferralChoice(FernanClient client) {
         String userPicked = System.getenv("REFERRAL_CODE");
         if (userPicked == null || userPicked.isBlank()) {
-            return ReferralChoice.none();
+            return CompletableFuture.completedFuture(ReferralChoice.none());
         }
-        ReferralValidation v = client.store().validateReferral(userPicked).join();
-        if (!v.valid()) {
-            System.out.println("Referral '" + userPicked + "' is not valid; proceeding without one.");
-            return ReferralChoice.none();
-        }
-        System.out.println("Referral '" + userPicked + "' applies " + v.discountPercent() + "% off");
-        return ReferralChoice.of(userPicked);
+        return client.store().validateReferral(userPicked).thenApply(v -> {
+            if (!v.valid()) {
+                System.out.println("Referral '" + userPicked + "' is not valid; proceeding without one.");
+                return ReferralChoice.none();
+            }
+            System.out.println("Referral '" + userPicked + "' applies " + v.discountPercent() + "% off");
+            return ReferralChoice.of(userPicked);
+        });
     }
 
-    private static void handleFailure(CompletionException ce) {
-        Throwable cause = ce.getCause();
+    private static void handleFailure(Throwable t) {
+        Throwable cause = t instanceof CompletionException ? t.getCause() : t;
         if (cause instanceof FernanException e) {
             String hint =
                     switch (e.getType()) {
@@ -117,10 +123,7 @@ public final class AltManagerExample {
             System.err.println(e.getType() + ": " + hint);
             return;
         }
-        if (cause == null) {
-            throw new RuntimeException("Unknown failure", ce);
-        }
-        throw new RuntimeException(cause);
+        System.err.println("Unhandled failure: " + (cause == null ? t : cause));
     }
 
     @SuppressWarnings("unused")

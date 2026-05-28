@@ -89,8 +89,6 @@ prevents an agent (or human) from silently auto-applying a referral code.
 ```java
 import club.fernan.api.FernanClient;
 import club.fernan.api.model.referral.ReferralChoice;
-import club.fernan.api.model.store.Purchase;
-import club.fernan.api.model.user.User;
 
 FernanClient client = FernanClient.builder()
         .apiKey(System.getenv("FERNAN_KEY"))
@@ -98,15 +96,22 @@ FernanClient client = FernanClient.builder()
         .integration("my-app")
         .build();
 
-User me = client.user().me().join();
-System.out.println("balance: " + me.balance());
+client.user().me()
+        .thenAccept(me -> System.out.println("balance: " + me.balance()));
 
-Purchase order = client.store()
-        .purchase(1, 5, ReferralChoice.none())
-        .join();
+client.store().purchase(1, 5, ReferralChoice.none())
+        .thenAccept(this::onPurchase)
+        .exceptionally(t -> { onFailure(t); return null; });
 
+// ... later, on app exit:
 client.shutdown();
 ```
+
+> **Don't use `.join()` outside CLI/script contexts.** It blocks the calling
+> thread (catastrophic on a render thread, Netty event loop, or game tick)
+> and wraps exceptions in `CompletionException`. Chain with `.thenAccept` /
+> `.exceptionally` instead. See [`CLAUDE.md`](CLAUDE.md#async-and-threading)
+> for the threading model.
 
 ## Services
 
