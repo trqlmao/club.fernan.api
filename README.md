@@ -65,6 +65,25 @@ dependencies {
 </dependency>
 ```
 
+## For AI agents
+
+This library is intentionally structured so AI coding assistants
+(Claude Code, Copilot, Cursor, Cline, etc.) can wire it into your project in
+a single pass. If you're driving an agent, point it at:
+
+- [**`CLAUDE.md`**](CLAUDE.md) — full integration guide written for AI
+  consumption. Covers patterns, pitfalls, and threading.
+- [**`llms.txt`**](llms.txt) — structured index of every doc and example,
+  per the [llmstxt.org](https://llmstxt.org) convention. Suitable for an
+  agent to ingest as canonical context.
+- [**`examples/`**](examples/) — three canonical integration patterns
+  (minimal, alt-manager, error handling).
+
+The surface area an agent has to learn is deliberately small: one entry point
+(`FernanClient`), five typed services, one exception (`FernanException`) with
+a typed `ErrorType` enum, and an explicit `ReferralChoice` value type that
+prevents an agent (or human) from silently auto-applying a referral code.
+
 ## Quickstart
 
 ```java

@@ -1,9 +1,14 @@
 # CLAUDE.md — Integrating club.fernan.api
 
-This file is intended for AI coding assistants (Claude Code, Copilot, Cursor, etc.)
-that are helping a developer integrate this library into a Java project. The
-goal is to give the assistant enough context to write correct code on the first
-try.
+This file is the **canonical AI-integration guide** for this library. It is
+intended for AI coding assistants (Claude Code, Copilot, Cursor, Cline, etc.)
+that are helping a developer wire `club.fernan.api` into a Java project.
+The goal is to give the assistant enough context to write correct code on
+the first try.
+
+If you're an agent loading context, also pull
+[`llms.txt`](llms.txt) for a structured index of every relevant file in the
+repo.
 
 ## What this library is
 
