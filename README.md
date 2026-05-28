@@ -194,6 +194,10 @@ See [CHANGELOG.md](CHANGELOG.md) for released changes.
   feature requests (read [CONTRIBUTING.md](CONTRIBUTING.md) first).
 - [Security policy](SECURITY.md) for vulnerability reports.
 
+## Activity
+
+![Repobeats analytics image](https://repobeats.axiom.co/api/embed/8dbeaa4a26284a94efee6b89ac54f0f11fad9ef1.svg "Repobeats analytics image")
+
 ## License
 
 [MIT](LICENSE).
