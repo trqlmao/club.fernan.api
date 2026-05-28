@@ -17,8 +17,11 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * Default {@link HttpTransport} backed by {@link java.net.http.HttpClient} with
- * a virtual-thread executor.
+ * Default {@link HttpTransport} backed by {@link java.net.http.HttpClient}.
+ *
+ * <p>By default an internal cached daemon thread pool is created; callers wanting
+ * full control over completion threads can pass their own {@link ExecutorService}
+ * via the appropriate constructor (and assume responsibility for its lifecycle).
  *
  * @author trq
  * @since 0.1.0
@@ -28,22 +31,45 @@ public final class JdkHttpTransport implements HttpTransport {
     private final String baseUrl;
     private final HttpClient httpClient;
     private final ExecutorService executor;
+    private final boolean ownsExecutor;
     private final Gson gson;
     private final AuthProvider auth;
     private final String userAgent;
     private final IntegrationSignal integration;
 
+    /** Construct with an internally-managed executor. */
     public JdkHttpTransport(
             String baseUrl,
             AuthProvider auth,
             String userAgent,
             IntegrationSignal integration,
             int connectTimeoutMillis) {
+        this(baseUrl, auth, userAgent, integration, connectTimeoutMillis, null);
+    }
+
+    /**
+     * Construct with an optional caller-supplied executor. When {@code callerExecutor}
+     * is non-null, the transport will use it and skip its own pool — {@link #shutdown()}
+     * becomes a no-op and the caller owns the executor's lifecycle.
+     */
+    public JdkHttpTransport(
+            String baseUrl,
+            AuthProvider auth,
+            String userAgent,
+            IntegrationSignal integration,
+            int connectTimeoutMillis,
+            ExecutorService callerExecutor) {
         this.baseUrl = stripTrailingSlash(baseUrl);
         this.auth = auth;
         this.userAgent = userAgent;
         this.integration = integration;
-        this.executor = Executors.newCachedThreadPool(daemonFactory());
+        if (callerExecutor != null) {
+            this.executor = callerExecutor;
+            this.ownsExecutor = false;
+        } else {
+            this.executor = Executors.newCachedThreadPool(daemonFactory());
+            this.ownsExecutor = true;
+        }
         this.httpClient = HttpClient.newBuilder()
                 .connectTimeout(Duration.ofMillis(connectTimeoutMillis))
                 .executor(executor)
@@ -82,9 +108,12 @@ public final class JdkHttpTransport implements HttpTransport {
         return execute(request);
     }
 
+    /** No-op when a caller-supplied executor is in use (caller owns lifecycle). */
     @Override
     public void shutdown() {
-        executor.shutdown();
+        if (ownsExecutor) {
+            executor.shutdown();
+        }
     }
 
     private HttpRequest.Builder newRequest(String path) {
