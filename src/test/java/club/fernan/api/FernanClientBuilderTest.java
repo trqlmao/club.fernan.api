@@ -1,9 +1,12 @@
 package club.fernan.api;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import club.fernan.api.integration.IntegrationSignal;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import org.junit.jupiter.api.Test;
 
 class FernanClientBuilderTest {
@@ -53,5 +56,27 @@ class FernanClientBuilderTest {
     void blank_integration_id_rejected() {
         assertThrows(IllegalArgumentException.class, () -> IntegrationSignal.of(""));
         assertThrows(IllegalArgumentException.class, () -> IntegrationSignal.of("   "));
+    }
+
+    @Test
+    void on_api_key_change_listener_accepted() {
+        FernanClient client = FernanClient.builder()
+                .apiKey("test")
+                .onApiKeyChange(k -> {
+                    /* listener installed; verified via ApiKeyAuthTest */
+                })
+                .build();
+        client.shutdown();
+    }
+
+    @Test
+    void caller_supplied_executor_lifecycle_owned_by_caller() {
+        ExecutorService pool = Executors.newSingleThreadExecutor();
+        FernanClient client =
+                FernanClient.builder().apiKey("test").executor(pool).build();
+        client.shutdown();
+        // Caller-owned executor must remain alive after client.shutdown().
+        assertFalse(pool.isShutdown(), "caller-supplied executor must not be shut down by the client");
+        pool.shutdown();
     }
 }

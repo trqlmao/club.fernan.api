@@ -1,10 +1,12 @@
 package club.fernan.api.service;
 
+import club.fernan.api.auth.ApiKeyAuth;
 import club.fernan.api.http.JdkHttpTransport;
 import club.fernan.api.model.user.RedemptionResult;
 import club.fernan.api.model.user.User;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import lombok.RequiredArgsConstructor;
 
 /**
  * User-scoped endpoints: profile, API-key management, balance redemption.
@@ -15,13 +17,11 @@ import java.util.concurrent.CompletableFuture;
  * @author trq
  * @since 0.1.0
  */
+@RequiredArgsConstructor
 public final class UserService {
 
     private final JdkHttpTransport http;
-
-    public UserService(JdkHttpTransport http) {
-        this.http = http;
-    }
+    private final ApiKeyAuth auth;
 
     /** Current authenticated user. */
     public CompletableFuture<User> me() {
@@ -29,14 +29,22 @@ public final class UserService {
     }
 
     /** Retrieve (or create) the user's API key. */
-    public CompletableFuture<String> getApiKey() {
+    public CompletableFuture<String> apiKey() {
         return http.get("/user/key").thenApply(data -> data.get("api_key").getAsString());
     }
 
-    /** Rotate the API key, invalidating the previous one. */
+    /**
+     * Rotate the API key, invalidating the previous one. The client's active key is
+     * updated synchronously when the response arrives, and any listener registered via
+     * {@code FernanClientBuilder.onApiKeyChange(...)} is fired with the new key.
+     * Subsequent requests on this client use the rotated key without rebuild.
+     */
     public CompletableFuture<String> regenerateApiKey() {
-        return http.post("/user/key/regenerate", null)
-                .thenApply(data -> data.get("api_key").getAsString());
+        return http.post("/user/key/regenerate", null).thenApply(data -> {
+            String newKey = data.get("api_key").getAsString();
+            auth.updateApiKey(newKey);
+            return newKey;
+        });
     }
 
     /** Redeem a 24-character peso key. */
