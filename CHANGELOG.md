@@ -7,8 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Planned
+
+- Wire `UserService.getPreferredReferral` / `setPreferredReferral` once the
+  upstream endpoint paths are published.
+- Reconcile `X-Integration` header with the upstream integration field once
+  finalized.
+
+## [0.2.0] — 2026-05-28
+
 ### Added
 
+- `DISCLAIMER.md` and a top-of-README callout making the unaffiliated
+  status, no-compensation status, and AS-IS provision explicit.
 - Conventions document in `CONTRIBUTING.md`: bare-name method convention for
   new code, Lombok usage rules, `@SerializedName`-on-every-field rule for
   obfuscation safety, async-first guidance, threading model.
@@ -44,13 +55,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `.executor(...)` own the lifecycle; `client.shutdown()` is a no-op for
   caller-supplied executors.
 
-### Planned
-
-- Wire `UserService.getPreferredReferral` / `setPreferredReferral` once the
-  upstream endpoint paths are published.
-- Reconcile `X-Integration` header with the upstream integration field once
-  finalized.
-
 ## [0.1.0] — 2026-05-28
 
 ### Added
@@ -58,7 +62,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Initial public release.
 - `FernanClient` facade with five typed services: `UserService`, `StoreService`,
   `RefundService`, `ReferralService`, `HealthService`.
-- JDK `java.net.http`-backed transport with virtual-thread executor.
+- JDK `java.net.http`-backed transport with a cached daemon-thread executor.
 - Typed `FernanException` with `ErrorType` enum covering every documented error mode.
 - `ReferralChoice` value type to force explicit caller decisions on referral codes.
 - `IntegrationSignal` (`X-Integration` header) for partner-attribution tracking.
