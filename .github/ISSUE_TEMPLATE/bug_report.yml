@@ -1,0 +1,74 @@
+name: Bug report
+description: Report a defect in the library (wrong parsing, missing field, unexpected exception, etc.)
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to file a bug report. Before continuing, please confirm this is a library issue and not an upstream API issue (account problems, server errors, billing). Those go to the fernan.club admins, not here.
+
+  - type: input
+    id: version
+    attributes:
+      label: Library version
+      description: e.g. `0.1.0`
+      placeholder: "0.1.0"
+    validations:
+      required: true
+
+  - type: input
+    id: java
+    attributes:
+      label: Java version
+      description: Output of `java -version`
+      placeholder: "openjdk 21.0.5"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: host
+    attributes:
+      label: Host environment
+      options:
+        - Standalone JVM application
+        - Minecraft mod (Fabric)
+        - Minecraft mod (Forge / NeoForge)
+        - Other (please describe in details)
+    validations:
+      required: true
+
+  - type: textarea
+    id: what_happened
+    attributes:
+      label: What happened
+      description: What did you do, what did you expect, what did you actually see?
+      placeholder: |
+        Called `client.store().purchase(...)` and got ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: repro
+    attributes:
+      label: Minimal reproduction
+      description: A small, self-contained code snippet that reproduces the bug. Do **not** paste real API keys.
+      render: java
+    validations:
+      required: true
+
+  - type: textarea
+    id: stack
+    attributes:
+      label: Stack trace (if any)
+      description: Full stack trace from the exception.
+      render: shell
+
+  - type: checkboxes
+    id: confirm
+    attributes:
+      label: Confirmations
+      options:
+        - label: I have searched existing issues for duplicates.
+          required: true
+        - label: I have removed any real API keys, user IDs, or other secrets from the report.
+          required: true
