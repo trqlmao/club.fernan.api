@@ -111,14 +111,94 @@ fmt: apply spotlessApply after Java 21 syntax updates
 
 ## Coding conventions
 
-- Java 17 source level. No language features above Java 17 (project compiles
-  with `--release 17` so newer features will fail the build).
-- Records for DTOs. Immutable wherever practical (`final` fields, no setters).
-- Gson `@SerializedName` for every snake_case JSON field — keep Java
-  identifiers idiomatic (camelCase) regardless of wire format.
-- One `FernanException` for all failures, categorized via `ErrorType`. Do not
-  introduce new exception subclasses unless an entirely new error category
-  arises that doesn't fit the existing enum.
+### Language level
+
+- Java 17 source level. No language features above Java 17 — the project
+  compiles with `--release 17` so newer features will fail the build.
+
+### Method naming
+
+- **New code uses bare names.** Queries: `me()`, `apiKey()`, `stock()`.
+  Actions (verbs): `regenerateApiKey()`, `purchase()`, `redeemKey()`.
+  This matches modern Java SDKs (Stripe, AWS v2, OkHttp, Retrofit, Google Cloud).
+- **Legacy `get*` / `set*` methods stay until intentionally refactored.** Do
+  not mix conventions when adding methods to a class — pick one to match the
+  surrounding code, or do the rename pass as a separate `refactor:` commit.
+- The service-accessor pattern (`client.user().me()`) is canonical. The
+  service field on `FernanClient` is named after its role
+  (`user`, `store`, `refunds`, `referrals`, `health`), not its type
+  (`userService`), to match the SDK convention and read fluently.
+
+### Builders
+
+- Bare method names, fluent return — `builder.apiKey(k).integration("x").build()`.
+- No `withX` prefixes (that's the older Guava-style copy-builder convention;
+  we want modern accumulating builders).
+- Validate required fields in `build()`, not in setters.
+
+### Records and JSON
+
+- **All DTOs are records.** Immutable by construction.
+- **Every record field gets `@SerializedName("<wire_name>")` — no exceptions.**
+  Even when the Java name matches the JSON name verbatim. This is for
+  obfuscation safety: consumers that shade + obfuscate the jar (ProGuard,
+  R8, ZKM) will rename Java fields, and Gson would silently fail to
+  deserialize without the annotation. The cost is one extra annotation
+  per field; the benefit is the wrapper continues to work under any
+  obfuscator a downstream chooses.
+- Records get helper methods (`fullyDelivered()`, `hasRemainingUses()`) only
+  for derived booleans or simple computed values. Anything else belongs in
+  a service.
+
+### Lombok
+
+Lombok is a `compileOnly` + `annotationProcessor` dependency and is **not**
+shipped in the published jar.
+
+**Use Lombok for:**
+- `@RequiredArgsConstructor` on classes whose constructor is a simple
+  field-init (the five `*Service` classes).
+- `@Getter` + `@Accessors(fluent = true)` on non-record classes that expose
+  state (`FernanClient`).
+- `@NonNull` to enforce non-null parameters where a meaningful runtime
+  validation is desired.
+
+**Do NOT use Lombok for:**
+- **Records** — they already provide fluent accessors, value semantics,
+  `equals`, `hashCode`, `toString`. Lombok conflicts with records.
+- **`FernanClientBuilder`** — hand-written reads more clearly than `@Builder`
+  on a target class, and the public surface stays trivial to javadoc.
+- **`JdkHttpTransport`** — constructor does real init work (executor,
+  HTTP client, Gson configuration).
+- **`FernanException`** — six overloaded constructors with distinct
+  semantic shapes; Lombok would obscure them.
+
+### Errors
+
+- One `FernanException` for all failures, categorized via `ErrorType`. Do
+  not introduce new exception subclasses unless an entirely new error
+  category arises that doesn't fit the existing enum.
+
+### Async and threading
+
+- Every endpoint returns `CompletableFuture<T>`. Callers chain via
+  `.thenAccept` / `.thenApply` / `.exceptionally` / `.handle`.
+- **`.join()` is allowed only in CLI tools, scripts, and short-lived
+  programs.** It is a footgun in any process with a UI thread, game tick,
+  Netty event loop, or render thread; it blocks the calling thread and
+  wraps exceptions in `CompletionException`. Examples in `docs/` and
+  `examples/` lead with chaining, not `.join()`.
+- Continuations attached via `.thenApply` / `.thenAccept` (without `Async`)
+  run on the thread that completed the future — which for HTTP responses
+  is the transport's executor. For non-trivial continuation work, use
+  `.thenApplyAsync(fn, yourExecutor)` so transport threads are not
+  starved.
+- Callers wanting full control over completion threads pass an executor via
+  `FernanClientBuilder.executor(...)`. When set, the client does NOT shut
+  the executor down — the caller owns its lifecycle.
+
+### Comments and Javadoc
+
 - Public methods get Javadoc. Test methods do not (their names are the spec).
 - Spotless + Palantir Java Format is the source of truth on style — let it
   reformat rather than hand-formatting.
@@ -126,7 +206,7 @@ fmt: apply spotlessApply after Java 21 syntax updates
 ## Adding a new endpoint
 
 1. Add the model record(s) under `src/main/java/club/fernan/api/model/<domain>/`
-   with Gson `@SerializedName` for every snake_case field.
+   with `@SerializedName` on every record parameter — no exceptions.
 2. Add the method to the appropriate service in
    `src/main/java/club/fernan/api/service/`.
 3. Surface a top-level shortcut on `FernanClient` only if the endpoint is
