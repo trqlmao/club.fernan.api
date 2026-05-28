@@ -46,5 +46,6 @@ will not be backported; bump to the latest before reporting.
 
 | Version | Supported          |
 |---------|--------------------|
-| 0.1.x   | :white_check_mark: |
+| 0.2.x   | :white_check_mark: |
+| 0.1.x   | :x:                |
 | < 0.1   | :x:                |

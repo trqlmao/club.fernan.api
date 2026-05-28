@@ -32,7 +32,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.github.trqlmao:club.fernan.api:0.1.0")
+    implementation("com.github.trqlmao:club.fernan.api:0.2.0")
 }
 ```
 
@@ -44,7 +44,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.github.trqlmao:club.fernan.api:0.1.0'
+    implementation 'com.github.trqlmao:club.fernan.api:0.2.0'
 }
 ```
 
@@ -61,7 +61,7 @@ dependencies {
 <dependency>
   <groupId>com.github.trqlmao</groupId>
   <artifactId>club.fernan.api</artifactId>
-  <version>0.1.0</version>
+  <version>0.2.0</version>
 </dependency>
 ```
 
@@ -117,7 +117,7 @@ client.shutdown();
 
 | Service              | Endpoints                                                                                 |
 |----------------------|-------------------------------------------------------------------------------------------|
-| `client.user()`      | `me`, `getApiKey`, `regenerateApiKey`, `redeemKey`                                        |
+| `client.user()`      | `me`, `apiKey`, `regenerateApiKey`, `redeemKey`                                           |
 | `client.store()`     | `getStock`, `getCooldowns`, `purchase`, `getPurchases`, `getPurchase`, `validateReferral` |
 | `client.refunds()`   | `create`, `cancel`, `list`, `get`                                                         |
 | `client.referrals()` | `create`, `list`, `stats`, `toggle`, `delete` (MediaPlus+)                                |
@@ -196,10 +196,10 @@ This sends `X-Integration: my-app` on every request.
 
 ## Roadmap
 
-- **0.2.0** — wire `UserService.getPreferredReferral` /
+- **Next minor** — wire `UserService.getPreferredReferral` /
   `setPreferredReferral` once the upstream endpoints are finalized.
-- **0.2.0** — reconcile the `X-Integration` header with whatever final shape
-  the upstream lands on.
+- **Next minor** — reconcile the `X-Integration` header with whatever final
+  shape the upstream lands on.
 - **Future** — pluggable retry policy with exponential backoff for transient
   5xx + 429 responses.
 

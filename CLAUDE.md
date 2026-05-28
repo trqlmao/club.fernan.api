@@ -26,7 +26,7 @@ JitPack-hosted. Gradle (Kotlin DSL):
 
 ```kotlin
 repositories { maven { url = uri("https://jitpack.io") } }
-dependencies { implementation("com.github.trqlmao:club.fernan.api:0.1.0") }
+dependencies { implementation("com.github.trqlmao:club.fernan.api:0.2.0") }
 ```
 
 ## The 30-second mental model
@@ -214,7 +214,8 @@ the *integration*, not the user.
 ## Pitfalls to avoid
 
 - **Don't create a new `FernanClient` per request.** Build one at startup, reuse.
-- **Don't forget `client.shutdown()`** — leaks the virtual-thread executor otherwise.
+- **Don't forget `client.shutdown()`** — leaks the internal executor otherwise.
+  (Safe no-op when you supply your own via `.executor(...)`.)
 - **Don't catch `FernanException` directly** off a `CompletableFuture` — it's
   wrapped in `CompletionException`. Use `.exceptionally` / `.handle` and unwrap
   via `getCause()`.

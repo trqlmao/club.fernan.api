@@ -30,7 +30,7 @@ AI-integration guide.
 ## Core source
 
 - [FernanClient.java](https://raw.githubusercontent.com/trqlmao/club.fernan.api/main/src/main/java/club/fernan/api/FernanClient.java): Top-level facade exposing the five services.
-- [FernanClientBuilder.java](https://raw.githubusercontent.com/trqlmao/club.fernan.api/main/src/main/java/club/fernan/api/FernanClientBuilder.java): Builder with `apiKey`, `userAgent`, `integration`, `baseUrl`, `connectTimeoutMillis`.
+- [FernanClientBuilder.java](https://raw.githubusercontent.com/trqlmao/club.fernan.api/main/src/main/java/club/fernan/api/FernanClientBuilder.java): Builder with `apiKey`, `userAgent`, `integration`, `baseUrl`, `connectTimeoutMillis`, `onApiKeyChange`, `executor`.
 - [FernanException.java](https://raw.githubusercontent.com/trqlmao/club.fernan.api/main/src/main/java/club/fernan/api/exception/FernanException.java): Single exception class for all API errors.
 - [ErrorType.java](https://raw.githubusercontent.com/trqlmao/club.fernan.api/main/src/main/java/club/fernan/api/exception/ErrorType.java): Enum of error categories — switch on this rather than HTTP status codes.
 - [ReferralChoice.java](https://raw.githubusercontent.com/trqlmao/club.fernan.api/main/src/main/java/club/fernan/api/model/referral/ReferralChoice.java): Explicit caller decision type. Use `ReferralChoice.of(code)` or `ReferralChoice.none()` — never null-default.
@@ -38,7 +38,7 @@ AI-integration guide.
 
 ## Services
 
-- [UserService.java](https://raw.githubusercontent.com/trqlmao/club.fernan.api/main/src/main/java/club/fernan/api/service/UserService.java): `me`, `getApiKey`, `regenerateApiKey`, `redeemKey`.
+- [UserService.java](https://raw.githubusercontent.com/trqlmao/club.fernan.api/main/src/main/java/club/fernan/api/service/UserService.java): `me`, `apiKey`, `regenerateApiKey` (silently updates client auth + fires `onApiKeyChange`), `redeemKey`.
 - [StoreService.java](https://raw.githubusercontent.com/trqlmao/club.fernan.api/main/src/main/java/club/fernan/api/service/StoreService.java): `getStock`, `getCooldowns`, `purchase`, `getPurchases`, `getPurchase`, `validateReferral`.
 - [RefundService.java](https://raw.githubusercontent.com/trqlmao/club.fernan.api/main/src/main/java/club/fernan/api/service/RefundService.java): `create`, `cancel`, `list`, `get`.
 - [ReferralService.java](https://raw.githubusercontent.com/trqlmao/club.fernan.api/main/src/main/java/club/fernan/api/service/ReferralService.java): `create`, `list`, `stats`, `toggle`, `delete` (MediaPlus+ only).
