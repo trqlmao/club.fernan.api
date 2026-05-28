@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import lombok.RequiredArgsConstructor;
 
 /**
  * Store-facing endpoints: stock, purchases, cooldowns, referral validation.
@@ -22,13 +23,10 @@ import java.util.concurrent.CompletableFuture;
  * @author trq
  * @since 0.1.0
  */
+@RequiredArgsConstructor
 public final class StoreService {
 
     private final JdkHttpTransport http;
-
-    public StoreService(JdkHttpTransport http) {
-        this.http = http;
-    }
 
     /** List available products. */
     public CompletableFuture<List<Product>> getStock() {

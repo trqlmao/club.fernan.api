@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import lombok.RequiredArgsConstructor;
 
 /**
  * Referral-code management for creators (MediaPlus+).
@@ -20,13 +21,10 @@ import java.util.concurrent.CompletableFuture;
  * @author trq
  * @since 0.1.0
  */
+@RequiredArgsConstructor
 public final class ReferralService {
 
     private final JdkHttpTransport http;
-
-    public ReferralService(JdkHttpTransport http) {
-        this.http = http;
-    }
 
     /**
      * Create a new referral code.

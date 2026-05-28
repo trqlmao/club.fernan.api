@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import lombok.RequiredArgsConstructor;
 
 /**
  * Refund endpoints: create, cancel, list, fetch detail.
@@ -17,13 +18,10 @@ import java.util.concurrent.CompletableFuture;
  * @author trq
  * @since 0.1.0
  */
+@RequiredArgsConstructor
 public final class RefundService {
 
     private final JdkHttpTransport http;
-
-    public RefundService(JdkHttpTransport http) {
-        this.http = http;
-    }
 
     /**
      * Create a refund request.

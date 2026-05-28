@@ -3,6 +3,7 @@ package club.fernan.api.service;
 import club.fernan.api.http.JdkHttpTransport;
 import club.fernan.api.model.health.HealthStatus;
 import java.util.concurrent.CompletableFuture;
+import lombok.RequiredArgsConstructor;
 
 /**
  * Health-check endpoints.
@@ -10,13 +11,10 @@ import java.util.concurrent.CompletableFuture;
  * @author trq
  * @since 0.1.0
  */
+@RequiredArgsConstructor
 public final class HealthService {
 
     private final JdkHttpTransport http;
-
-    public HealthService(JdkHttpTransport http) {
-        this.http = http;
-    }
 
     /** Full health check, including downstream dependencies. */
     public CompletableFuture<HealthStatus> get() {
