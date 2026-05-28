@@ -28,7 +28,11 @@ public final class UserService {
         return http.get("/user/me").thenApply(data -> http.gson().fromJson(data, User.class));
     }
 
-    /** Retrieve (or create) the user's API key. */
+    /**
+     * Retrieve (or create) the user's API key.
+     *
+     * @since 0.2.0 (renamed from {@code getApiKey()}).
+     */
     public CompletableFuture<String> apiKey() {
         return http.get("/user/key").thenApply(data -> data.get("api_key").getAsString());
     }

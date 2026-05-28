@@ -31,7 +31,11 @@ public final class ApiKeyAuth implements AuthProvider {
         this.apiKey = apiKey;
     }
 
-    /** Currently active API key. */
+    /**
+     * Currently active API key.
+     *
+     * @since 0.2.0
+     */
     public String apiKey() {
         return apiKey;
     }
@@ -41,6 +45,7 @@ public final class ApiKeyAuth implements AuthProvider {
      * Listener exceptions are not swallowed; they propagate to the caller.
      *
      * @param newKey The new API key. Must be non-null.
+     * @since 0.2.0
      */
     public void updateApiKey(@NonNull String newKey) {
         this.apiKey = newKey;
@@ -54,6 +59,7 @@ public final class ApiKeyAuth implements AuthProvider {
      * Listeners are invoked in registration order.
      *
      * @param listener The callback to register. Must be non-null.
+     * @since 0.2.0
      */
     public void addListener(Consumer<String> listener) {
         listeners.add(Objects.requireNonNull(listener, "listener"));

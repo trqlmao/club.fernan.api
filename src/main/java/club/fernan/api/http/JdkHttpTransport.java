@@ -51,6 +51,8 @@ public final class JdkHttpTransport implements HttpTransport {
      * Construct with an optional caller-supplied executor. When {@code callerExecutor}
      * is non-null, the transport will use it and skip its own pool — {@link #shutdown()}
      * becomes a no-op and the caller owns the executor's lifecycle.
+     *
+     * @since 0.2.0
      */
     public JdkHttpTransport(
             String baseUrl,

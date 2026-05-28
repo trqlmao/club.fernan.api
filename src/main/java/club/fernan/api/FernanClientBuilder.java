@@ -73,6 +73,8 @@ public final class FernanClientBuilder {
      * {@code UserService.regenerateApiKey}). Useful for persisting the new key
      * to disk, a vault, an environment variable, etc. The listener runs
      * synchronously on the thread that completes the rotation call.
+     *
+     * @since 0.2.0
      */
     public FernanClientBuilder onApiKeyChange(Consumer<String> listener) {
         this.onApiKeyChange = listener;
@@ -83,6 +85,8 @@ public final class FernanClientBuilder {
      * Use the given executor for HttpClient async work. When set, callers own the
      * executor's lifecycle and {@link FernanClient#shutdown()} will NOT shut it down.
      * When unset, an internal cached daemon pool is created and managed by the client.
+     *
+     * @since 0.2.0
      */
     public FernanClientBuilder executor(ExecutorService executor) {
         this.executor = executor;
