@@ -11,6 +11,12 @@ Drop-in Java client for the [fernan.club](https://fernan.club) REST API.
 Async-first, JDK 17+, zero dependencies beyond Gson, safe to embed in mods,
 launchers, or standalone JVM apps.
 
+> **Unofficial.** This project is community tooling. It is **not affiliated
+> with, endorsed by, or sponsored by** fernan.club. The maintainer receives
+> no compensation from fernan.club, does not operate any part of the
+> upstream service, and does not vouch for the goods or services it
+> delivers. Read the full [DISCLAIMER](DISCLAIMER.md) before using.
+
 - One `FernanClient` entry point exposing five typed services
   (`user`, `store`, `refunds`, `referrals`, `health`).
 - All endpoints return `CompletableFuture<T>`.
@@ -217,6 +223,7 @@ See [CHANGELOG.md](CHANGELOG.md) for released changes.
 - [Issues](https://github.com/trqlmao/club.fernan.api/issues) for bugs and
   feature requests (read [CONTRIBUTING.md](CONTRIBUTING.md) first).
 - [Security policy](SECURITY.md) for vulnerability reports.
+- [Disclaimer](DISCLAIMER.md) — unaffiliated, unendorsed, AS-IS.
 
 ## Activity
 
