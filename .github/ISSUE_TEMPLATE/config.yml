@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: fernan.club service / API issue
+    url: https://fernan.club
+    about: Server-side bugs, account problems, billing, or refund disputes belong with the fernan.club admins, not this library.
+  - name: Security vulnerability
+    url: https://github.com/trqlmao/club.fernan.api/security/advisories/new
+    about: Report vulnerabilities privately via GitHub Security Advisories. Do not file public issues for security reports.
+  - name: Questions / usage help
+    url: https://github.com/trqlmao/club.fernan.api/discussions
+    about: For "how do I use this with X?" questions, open a Discussion instead of an issue.

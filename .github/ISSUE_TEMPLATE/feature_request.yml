@@ -1,0 +1,37 @@
+name: Feature request
+description: Propose a new endpoint binding, helper method, or ergonomic improvement
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this template for library-side changes (new endpoint binding, helper method, ergonomic improvement). If you're requesting a change to the fernan.club service itself, please contact the admins instead.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does this solve?
+      description: Describe the use case. Examples help.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed
+    attributes:
+      label: Proposed API
+      description: Sketch the method signature(s) or class shape you have in mind.
+      render: java
+
+  - type: textarea
+    id: upstream
+    attributes:
+      label: Upstream documentation
+      description: If this binds a new endpoint, link the upstream documentation that defines its shape.
+
+  - type: checkboxes
+    id: confirm
+    attributes:
+      label: Confirmations
+      options:
+        - label: I have searched existing issues and discussions for similar requests.
+          required: true
