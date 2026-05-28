@@ -9,8 +9,8 @@ import com.google.gson.annotations.SerializedName;
  * @since 0.1.0
  */
 public record RedemptionResult(
-        String message,
-        long value,
+        @SerializedName("message") String message,
+        @SerializedName("value") long value,
         @SerializedName("balance_before") long balanceBefore,
         @SerializedName("balance_after") long balanceAfter) {
 

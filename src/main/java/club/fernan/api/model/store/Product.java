@@ -12,11 +12,11 @@ public record Product(
         @SerializedName("product_id") int productId,
         @SerializedName("product_name") String productName,
         @SerializedName("product_description") String productDescription,
-        String category,
+        @SerializedName("category") String category,
         @SerializedName("server_category") String serverCategory,
-        int count,
-        int price,
-        int cooldown,
+        @SerializedName("count") int count,
+        @SerializedName("price") int price,
+        @SerializedName("cooldown") int cooldown,
         @SerializedName("purchase_limit") int purchaseLimit,
         @SerializedName("image_url") String imageUrl) {
 

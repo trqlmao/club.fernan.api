@@ -16,7 +16,7 @@ public record Refund(
         @SerializedName("requested_at") String requestedAt,
         @SerializedName("amount_to_refund") long amountToRefund,
         @SerializedName("item_count") int itemCount,
-        String status,
+        @SerializedName("status") String status,
         @SerializedName("handled_at") String handledAt) {
 
     public boolean isPending() {

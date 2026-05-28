@@ -12,7 +12,7 @@ import java.util.List;
  */
 public record Purchase(
         @SerializedName("purchase_id") String purchaseId,
-        String product,
+        @SerializedName("product") String product,
         @SerializedName("requested_amount") int requestedAmount,
         @SerializedName("delivered_amount") int deliveredAmount,
         @SerializedName("invalid_count") int invalidCount,
@@ -20,7 +20,7 @@ public record Purchase(
         @SerializedName("total_cost") long totalCost,
         @SerializedName("balance_before") long balanceBefore,
         @SerializedName("balance_after") long balanceAfter,
-        List<PurchasedAccount> products,
+        @SerializedName("products") List<PurchasedAccount> products,
         @SerializedName("referral_code") String referralCode,
         @SerializedName("referral_discount") int referralDiscount) {
 

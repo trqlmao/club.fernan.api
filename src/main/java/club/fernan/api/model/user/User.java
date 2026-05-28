@@ -10,9 +10,9 @@ import com.google.gson.annotations.SerializedName;
  */
 public record User(
         @SerializedName("discord_id") String discordId,
-        String username,
+        @SerializedName("username") String username,
         @SerializedName("avatar_url") String avatarUrl,
-        long balance,
+        @SerializedName("balance") long balance,
         @SerializedName("role_id") int roleId) {
 
     /** True if {@code role_id >= 3}. */

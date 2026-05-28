@@ -16,11 +16,11 @@ public record PurchaseDetail(
         @SerializedName("purchase_id") String purchaseId,
         @SerializedName("product_id") int productId,
         @SerializedName("product_name") String productName,
-        String category,
+        @SerializedName("category") String category,
         @SerializedName("purchased_at") String purchasedAt,
-        int amount,
+        @SerializedName("amount") int amount,
         @SerializedName("total_paid") long totalPaid,
-        List<PurchaseDetailProduct> products,
+        @SerializedName("products") List<PurchaseDetailProduct> products,
         @SerializedName("refund_status") String refundStatus,
         @SerializedName("refund_denial_reason") String refundDenialReason,
         @SerializedName("can_refund") boolean canRefund) {
@@ -31,7 +31,10 @@ public record PurchaseDetail(
      * @author trq
      * @since 0.1.0
      */
-    public record PurchaseDetailProduct(@SerializedName("mc_uuid") String mcUuid, String data, String username) {
+    public record PurchaseDetailProduct(
+            @SerializedName("mc_uuid") String mcUuid,
+            @SerializedName("data") String data,
+            @SerializedName("username") String username) {
 
         /** Decoded session/cookie data, or {@code null} if {@code data} is empty. */
         public String decodedData() {

@@ -8,4 +8,7 @@ import com.google.gson.annotations.SerializedName;
  * @author trq
  * @since 0.1.0
  */
-public record ReferralValidation(boolean valid, String code, @SerializedName("discount_percent") int discountPercent) {}
+public record ReferralValidation(
+        @SerializedName("valid") boolean valid,
+        @SerializedName("code") String code,
+        @SerializedName("discount_percent") int discountPercent) {}

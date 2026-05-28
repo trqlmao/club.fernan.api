@@ -9,10 +9,10 @@ import com.google.gson.annotations.SerializedName;
  * @since 0.1.0
  */
 public record ReferralCode(
-        String code,
+        @SerializedName("code") String code,
         @SerializedName("discord_id") String discordId,
         @SerializedName("created_at") String createdAt,
-        int uses,
+        @SerializedName("uses") int uses,
         @SerializedName("max_uses") Integer maxUses,
         @SerializedName("reward_percent") int rewardPercent,
         @SerializedName("reward_flat") int rewardFlat,

@@ -11,7 +11,10 @@ import java.util.Base64;
  * @since 0.1.0
  */
 public record PurchasedAccount(
-        String data, String username, String uuid, @SerializedName("access_token") String accessToken) {
+        @SerializedName("data") String data,
+        @SerializedName("username") String username,
+        @SerializedName("uuid") String uuid,
+        @SerializedName("access_token") String accessToken) {
 
     /** Decoded session/cookie data, or {@code null} if {@code data} is empty. */
     public String decodedData() {

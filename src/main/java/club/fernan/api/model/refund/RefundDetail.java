@@ -19,7 +19,7 @@ public record RefundDetail(
         @SerializedName("amount_to_refund") long amountToRefund,
         @SerializedName("refund_reason") String refundReason,
         @SerializedName("refunded_products") List<String> refundedProducts,
-        String status,
+        @SerializedName("status") String status,
         @SerializedName("status_code") int statusCode,
         @SerializedName("handled_by") String handledBy,
         @SerializedName("handled_at") String handledAt,

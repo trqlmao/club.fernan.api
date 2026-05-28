@@ -9,10 +9,10 @@ import com.google.gson.annotations.SerializedName;
  * @since 0.1.0
  */
 public record RefundRequest(
-        String message,
+        @SerializedName("message") String message,
         @SerializedName("refund_id") String refundId,
         @SerializedName("purchase_id") String purchaseId,
         @SerializedName("amount_to_refund") long amountToRefund,
         @SerializedName("item_count") int itemCount,
-        String status,
+        @SerializedName("status") String status,
         @SerializedName("requested_at") String requestedAt) {}

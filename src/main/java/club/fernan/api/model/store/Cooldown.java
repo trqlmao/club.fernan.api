@@ -11,11 +11,11 @@ import com.google.gson.annotations.SerializedName;
 public record Cooldown(
         @SerializedName("product_id") int productId,
         @SerializedName("product_name") String productName,
-        String category,
+        @SerializedName("category") String category,
         @SerializedName("remaining_allowed") int remainingAllowed,
         @SerializedName("cooldown_ends_at") String cooldownEndsAt,
         @SerializedName("on_cooldown") boolean onCooldown,
-        int limit,
+        @SerializedName("limit") int limit,
         @SerializedName("cooldown_minutes") int cooldownMinutes) {
 
     /** True when no cooldown is active and the user has remaining allowance. */

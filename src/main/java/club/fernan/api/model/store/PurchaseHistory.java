@@ -12,9 +12,9 @@ public record PurchaseHistory(
         @SerializedName("purchase_id") String purchaseId,
         @SerializedName("product_id") int productId,
         @SerializedName("product_name") String productName,
-        String category,
+        @SerializedName("category") String category,
         @SerializedName("purchased_at") String purchasedAt,
-        int amount,
+        @SerializedName("amount") int amount,
         @SerializedName("total_paid") long totalPaid,
         @SerializedName("refund_status") String refundStatus,
         @SerializedName("refund_id") String refundId) {
