@@ -200,8 +200,17 @@ shipped in the published jar.
 ### Comments and Javadoc
 
 - Public methods get Javadoc. Test methods do not (their names are the spec).
-- Spotless + Palantir Java Format is the source of truth on style — let it
-  reformat rather than hand-formatting.
+
+### Style and formatting
+
+These are two independent axes:
+
+- **Code style** follows **Google Java Style** conventions — naming, structure,
+  import ordering, and Javadoc coverage (the rules in this section and above).
+- **Formatting** (whitespace, line wrapping; a 4-space, 120-column profile) is
+  owned by **Spotless running Palantir Java Format**. Run `./gradlew
+  spotlessApply` before committing — CI rejects misformatted code. Let the
+  formatter reformat rather than hand-formatting.
 
 ## Adding a new endpoint
 
