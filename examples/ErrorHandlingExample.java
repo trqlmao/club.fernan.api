@@ -36,7 +36,7 @@ public final class ErrorHandlingExample {
                 .thenAccept(p -> System.out.println("Delivered: " + p.deliveredAmount()))
                 .exceptionally(t -> {
                     FernanException e = unwrap(t);
-                    System.err.println("Gave up: " + e.getType() + " — " + e.getMessage());
+                    System.err.println("Gave up: " + e.type() + " — " + e.getMessage());
                     return null;
                 })
                 .whenComplete((__, ___) -> {
@@ -56,15 +56,15 @@ public final class ErrorHandlingExample {
                         return CompletableFuture.completedFuture(p);
                     }
                     FernanException e = unwrap(t);
-                    return switch (e.getType()) {
+                    return switch (e.type()) {
                         case RATE_LIMITED -> {
-                            long wait = e.getRetryAfter() == null ? 5L : e.getRetryAfter();
+                            long wait = e.retryAfter() == null ? 5L : e.retryAfter();
                             System.out.println("Rate limited; retrying in " + wait + "s.");
                             yield delayed(Duration.ofSeconds(wait))
                                     .thenCompose(__ -> attemptPurchase(client, productId, qty));
                         }
                         case COOLDOWN -> {
-                            System.out.println("On cooldown until " + e.getCooldownEndsAt() + "; aborting.");
+                            System.out.println("On cooldown until " + e.cooldownEndsAt() + "; aborting.");
                             yield CompletableFuture.<Purchase>failedFuture(e);
                         }
                         case INSUFFICIENT_BALANCE -> {

@@ -31,8 +31,8 @@ class CooldownJsonTest {
         assertEquals(3, c.remainingAllowed());
         assertFalse(c.onCooldown());
         assertTrue(c.canPurchase());
-        assertEquals(3, c.getMaxPurchasable(10));
-        assertEquals(2, c.getMaxPurchasable(2));
+        assertEquals(3, c.maxPurchasable(10));
+        assertEquals(2, c.maxPurchasable(2));
     }
 
     @Test
@@ -45,6 +45,6 @@ class CooldownJsonTest {
                 """;
         Cooldown c = gson.fromJson(json, Cooldown.class);
         assertFalse(c.canPurchase());
-        assertEquals(0, c.getMaxPurchasable(5));
+        assertEquals(0, c.maxPurchasable(5));
     }
 }

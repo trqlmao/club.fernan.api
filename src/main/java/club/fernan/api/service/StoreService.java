@@ -29,12 +29,12 @@ public final class StoreService {
     private final JdkHttpTransport http;
 
     /** List available products. */
-    public CompletableFuture<List<Product>> getStock() {
-        return getStock(null);
+    public CompletableFuture<List<Product>> stock() {
+        return stock(null);
     }
 
     /** List available products in the requested locale. */
-    public CompletableFuture<List<Product>> getStock(FernanLocale locale) {
+    public CompletableFuture<List<Product>> stock(FernanLocale locale) {
         return http.get("/store/stock" + localeQuery(locale)).thenApply(data -> {
             JsonArray arr = data.getAsJsonArray("stock");
             return http.gson().fromJson(arr, new TypeToken<List<Product>>() {}.getType());
@@ -42,12 +42,12 @@ public final class StoreService {
     }
 
     /** List per-product cooldown/purchase-limit status. */
-    public CompletableFuture<List<Cooldown>> getCooldowns() {
-        return getCooldowns(null);
+    public CompletableFuture<List<Cooldown>> cooldowns() {
+        return cooldowns(null);
     }
 
     /** List per-product cooldown/purchase-limit status in the requested locale. */
-    public CompletableFuture<List<Cooldown>> getCooldowns(FernanLocale locale) {
+    public CompletableFuture<List<Cooldown>> cooldowns(FernanLocale locale) {
         return http.get("/store/cooldown" + localeQuery(locale)).thenApply(data -> {
             JsonArray arr = data.getAsJsonArray("cooldowns");
             return http.gson().fromJson(arr, new TypeToken<List<Cooldown>>() {}.getType());
@@ -77,12 +77,12 @@ public final class StoreService {
     }
 
     /** Purchase history with default pagination ({@code limit=20, offset=0}). */
-    public CompletableFuture<List<PurchaseHistory>> getPurchases() {
-        return getPurchases(20, 0);
+    public CompletableFuture<List<PurchaseHistory>> purchases() {
+        return purchases(20, 0);
     }
 
     /** Purchase history with explicit pagination. */
-    public CompletableFuture<List<PurchaseHistory>> getPurchases(int limit, int offset) {
+    public CompletableFuture<List<PurchaseHistory>> purchases(int limit, int offset) {
         return http.get("/store/purchases?limit=" + limit + "&offset=" + offset).thenApply(data -> {
             JsonArray arr = data.getAsJsonArray("purchases");
             return http.gson().fromJson(arr, new TypeToken<List<PurchaseHistory>>() {}.getType());
@@ -90,7 +90,7 @@ public final class StoreService {
     }
 
     /** Detail view of a single purchase. */
-    public CompletableFuture<PurchaseDetail> getPurchase(String purchaseId) {
+    public CompletableFuture<PurchaseDetail> purchaseDetail(String purchaseId) {
         return http.get("/store/purchases/" + purchaseId)
                 .thenApply(data -> http.gson().fromJson(data.getAsJsonObject("purchase"), PurchaseDetail.class));
     }

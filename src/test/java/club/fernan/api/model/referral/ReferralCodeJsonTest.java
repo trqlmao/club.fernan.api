@@ -22,7 +22,7 @@ class ReferralCodeJsonTest {
         ReferralCode c = gson.fromJson(json, ReferralCode.class);
         assertTrue(c.hasUnlimitedUses());
         assertTrue(c.hasRemainingUses());
-        assertEquals(-1, c.getRemainingUses());
+        assertEquals(-1, c.remainingUses());
     }
 
     @Test
@@ -36,6 +36,6 @@ class ReferralCodeJsonTest {
         ReferralCode c = gson.fromJson(json, ReferralCode.class);
         assertFalse(c.hasUnlimitedUses());
         assertTrue(c.hasRemainingUses());
-        assertEquals(3, c.getRemainingUses());
+        assertEquals(3, c.remainingUses());
     }
 }

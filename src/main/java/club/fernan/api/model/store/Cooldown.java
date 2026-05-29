@@ -24,7 +24,7 @@ public record Cooldown(
     }
 
     /** Clamp {@code desired} to what can actually be purchased right now. */
-    public int getMaxPurchasable(int desired) {
+    public int maxPurchasable(int desired) {
         if (onCooldown) {
             return 0;
         }

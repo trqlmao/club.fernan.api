@@ -4,7 +4,6 @@ import club.fernan.api.exception.FernanException;
 import club.fernan.api.model.referral.ReferralChoice;
 import club.fernan.api.model.store.Product;
 import club.fernan.api.model.store.PurchasedAccount;
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.CountDownLatch;
@@ -53,7 +52,7 @@ public final class AltManagerExample {
 
         // 1. Browse stock, 2. resolve referral choice, 3. purchase, 4. register accounts.
         client.store()
-                .getStock()
+                .stock()
                 .thenCompose(stock -> {
                     Product chosen = stock.stream()
                             .filter(Product::inStock)
@@ -108,19 +107,19 @@ public final class AltManagerExample {
         Throwable cause = t instanceof CompletionException ? t.getCause() : t;
         if (cause instanceof FernanException e) {
             String hint =
-                    switch (e.getType()) {
+                    switch (e.type()) {
                         case INSUFFICIENT_BALANCE -> "Top up the account balance and retry.";
-                        case COOLDOWN -> "Cooldown ends at " + e.getCooldownEndsAt();
-                        case RATE_LIMITED -> "Retry after " + e.getRetryAfter() + "s";
+                        case COOLDOWN -> "Cooldown ends at " + e.cooldownEndsAt();
+                        case RATE_LIMITED -> "Retry after " + e.retryAfter() + "s";
                         case AUTHENTICATION -> "Bad API key. Regenerate via the dashboard.";
                         case BANNED -> "Account is banned.";
                         case VALIDATION -> "Invalid request: " + e.getMessage();
                         case NOT_FOUND -> "Resource missing.";
                         case CONFLICT -> "Conflicting request.";
-                        case SERVER_ERROR -> "Upstream error " + e.getErrorId();
+                        case SERVER_ERROR -> "Upstream error " + e.errorId();
                         case NETWORK, UNKNOWN -> "Transient failure; retry later.";
                     };
-            System.err.println(e.getType() + ": " + hint);
+            System.err.println(e.type() + ": " + hint);
             return;
         }
         System.err.println("Unhandled failure: " + (cause == null ? t : cause));

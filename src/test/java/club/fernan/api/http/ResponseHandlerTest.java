@@ -37,15 +37,15 @@ class ResponseHandlerTest {
     void unparseable_body_throws_unknown() {
         var response = fakeResponse(200, "<html>not json</html>");
         var ex = assertThrows(FernanException.class, () -> ResponseHandler.handle(response));
-        assertEquals(ErrorType.UNKNOWN, ex.getType());
+        assertEquals(ErrorType.UNKNOWN, ex.type());
     }
 
     @Test
     void status_400_maps_to_validation() {
         var response = fakeResponse(400, "{\"success\":false,\"data\":{\"error\":\"bad amount\"}}");
         var ex = assertThrows(FernanException.class, () -> ResponseHandler.handle(response));
-        assertEquals(ErrorType.VALIDATION, ex.getType());
-        assertEquals(400, ex.getStatusCode());
+        assertEquals(ErrorType.VALIDATION, ex.type());
+        assertEquals(400, ex.statusCode());
         assertEquals("bad amount", ex.getMessage());
     }
 
@@ -53,14 +53,14 @@ class ResponseHandlerTest {
     void status_422_maps_to_validation() {
         var response = fakeResponse(422, "{\"success\":false,\"data\":{\"error\":\"unprocessable\"}}");
         var ex = assertThrows(FernanException.class, () -> ResponseHandler.handle(response));
-        assertEquals(ErrorType.VALIDATION, ex.getType());
+        assertEquals(ErrorType.VALIDATION, ex.type());
     }
 
     @Test
     void status_401_maps_to_authentication() {
         var response = fakeResponse(401, "{\"success\":false,\"data\":{\"error\":\"invalid key\"}}");
         var ex = assertThrows(FernanException.class, () -> ResponseHandler.handle(response));
-        assertEquals(ErrorType.AUTHENTICATION, ex.getType());
+        assertEquals(ErrorType.AUTHENTICATION, ex.type());
     }
 
     @Test
@@ -68,28 +68,28 @@ class ResponseHandlerTest {
         var body = "{\"success\":false,\"data\":{\"error\":\"banned\",\"details\":{\"ban_id\":\"abc-123\"}}}";
         var response = fakeResponse(403, body);
         var ex = assertThrows(FernanException.class, () -> ResponseHandler.handle(response));
-        assertEquals(ErrorType.BANNED, ex.getType());
+        assertEquals(ErrorType.BANNED, ex.type());
     }
 
     @Test
     void status_403_without_ban_id_maps_to_authentication() {
         var response = fakeResponse(403, "{\"success\":false,\"data\":{\"error\":\"forbidden\"}}");
         var ex = assertThrows(FernanException.class, () -> ResponseHandler.handle(response));
-        assertEquals(ErrorType.AUTHENTICATION, ex.getType());
+        assertEquals(ErrorType.AUTHENTICATION, ex.type());
     }
 
     @Test
     void status_404_maps_to_not_found() {
         var response = fakeResponse(404, "{\"success\":false,\"data\":{\"error\":\"missing\"}}");
         var ex = assertThrows(FernanException.class, () -> ResponseHandler.handle(response));
-        assertEquals(ErrorType.NOT_FOUND, ex.getType());
+        assertEquals(ErrorType.NOT_FOUND, ex.type());
     }
 
     @Test
     void status_409_maps_to_conflict() {
         var response = fakeResponse(409, "{\"success\":false,\"data\":{\"error\":\"dup\"}}");
         var ex = assertThrows(FernanException.class, () -> ResponseHandler.handle(response));
-        assertEquals(ErrorType.CONFLICT, ex.getType());
+        assertEquals(ErrorType.CONFLICT, ex.type());
     }
 
     @Test
@@ -97,8 +97,8 @@ class ResponseHandlerTest {
         var body = "{\"success\":false,\"data\":{\"error\":\"cd\",\"cooldown_ends_at\":\"2026-05-28T12:00:00Z\"}}";
         var response = fakeResponse(429, body);
         var ex = assertThrows(FernanException.class, () -> ResponseHandler.handle(response));
-        assertEquals(ErrorType.COOLDOWN, ex.getType());
-        assertEquals("2026-05-28T12:00:00Z", ex.getCooldownEndsAt());
+        assertEquals(ErrorType.COOLDOWN, ex.type());
+        assertEquals("2026-05-28T12:00:00Z", ex.cooldownEndsAt());
     }
 
     @Test
@@ -106,15 +106,15 @@ class ResponseHandlerTest {
         var body = "{\"success\":false,\"data\":{\"error\":\"rl\",\"retry_after\":42}}";
         var response = fakeResponse(429, body);
         var ex = assertThrows(FernanException.class, () -> ResponseHandler.handle(response));
-        assertEquals(ErrorType.RATE_LIMITED, ex.getType());
-        assertEquals(42L, ex.getRetryAfter());
+        assertEquals(ErrorType.RATE_LIMITED, ex.type());
+        assertEquals(42L, ex.retryAfter());
     }
 
     @Test
     void status_429_bare_maps_to_rate_limited() {
         var response = fakeResponse(429, "{\"success\":false,\"data\":{\"error\":\"rl\"}}");
         var ex = assertThrows(FernanException.class, () -> ResponseHandler.handle(response));
-        assertEquals(ErrorType.RATE_LIMITED, ex.getType());
+        assertEquals(ErrorType.RATE_LIMITED, ex.type());
     }
 
     @Test
@@ -122,15 +122,15 @@ class ResponseHandlerTest {
         var body = "{\"success\":false,\"data\":{\"error\":\"boom\",\"error_id\":\"err-9001\"}}";
         var response = fakeResponse(500, body);
         var ex = assertThrows(FernanException.class, () -> ResponseHandler.handle(response));
-        assertEquals(ErrorType.SERVER_ERROR, ex.getType());
-        assertEquals("err-9001", ex.getErrorId());
+        assertEquals(ErrorType.SERVER_ERROR, ex.type());
+        assertEquals("err-9001", ex.errorId());
     }
 
     @Test
     void unknown_status_maps_to_unknown() {
         var response = fakeResponse(418, "{\"success\":false,\"data\":{\"error\":\"teapot\"}}");
         var ex = assertThrows(FernanException.class, () -> ResponseHandler.handle(response));
-        assertEquals(ErrorType.UNKNOWN, ex.getType());
+        assertEquals(ErrorType.UNKNOWN, ex.type());
     }
 
     @Test

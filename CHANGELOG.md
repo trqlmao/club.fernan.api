@@ -9,10 +9,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Planned
 
-- Wire `UserService.getPreferredReferral` / `setPreferredReferral` once the
+- Wire `UserService.preferredReferral()` / `preferredReferral(String)` once the
   upstream endpoint paths are published.
 - Reconcile `X-Integration` header with the upstream integration field once
   finalized.
+
+## [0.3.0] — 2026-05-28
+
+### Changed
+
+- **BREAKING**: every `get*` / `set*` accessor on the public surface was renamed
+  to a bare name, completing the new-code naming convention across the library.
+  Callers on `0.2.x` must update:
+  - `FernanException`: `getType` → `type`, `getStatusCode` → `statusCode`,
+    `getErrorId` → `errorId`, `getRetryAfter` → `retryAfter`,
+    `getCooldownEndsAt` → `cooldownEndsAt`.
+  - `StoreService`: `getStock` → `stock`, `getCooldowns` → `cooldowns`,
+    `getPurchases` → `purchases`, `getPurchase` → `purchaseDetail`.
+  - `UserService`: `getPreferredReferral` → `preferredReferral()`,
+    `setPreferredReferral(String)` → `preferredReferral(String)`.
+  - `Cooldown.getMaxPurchasable(int)` → `maxPurchasable(int)`.
+  - `ReferralCode.getRemainingUses()` → `remainingUses()`.
+- Formatting standardized on Palantir Java Format (4-space, 120-column) via
+  Spotless; code style continues to follow Google Java Style conventions. The
+  `examples/` sources are now covered by `spotlessCheck`. No API impact.
 
 ## [0.2.0] — 2026-05-28
 

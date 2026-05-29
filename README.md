@@ -38,7 +38,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.github.trqlmao:club.fernan.api:0.2.0")
+    implementation("com.github.trqlmao:club.fernan.api:0.3.0")
 }
 ```
 
@@ -50,7 +50,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.github.trqlmao:club.fernan.api:0.2.0'
+    implementation 'com.github.trqlmao:club.fernan.api:0.3.0'
 }
 ```
 
@@ -67,7 +67,7 @@ dependencies {
 <dependency>
   <groupId>com.github.trqlmao</groupId>
   <artifactId>club.fernan.api</artifactId>
-  <version>0.2.0</version>
+  <version>0.3.0</version>
 </dependency>
 ```
 
@@ -124,7 +124,7 @@ client.shutdown();
 | Service              | Endpoints                                                                                 |
 |----------------------|-------------------------------------------------------------------------------------------|
 | `client.user()`      | `me`, `apiKey`, `regenerateApiKey`, `redeemKey`                                           |
-| `client.store()`     | `getStock`, `getCooldowns`, `purchase`, `getPurchases`, `getPurchase`, `validateReferral` |
+| `client.store()`     | `stock`, `cooldowns`, `purchase`, `purchases`, `purchaseDetail`, `validateReferral`        |
 | `client.refunds()`   | `create`, `cancel`, `list`, `get`                                                         |
 | `client.referrals()` | `create`, `list`, `stats`, `toggle`, `delete` (MediaPlus+)                                |
 | `client.health()`    | `get`, `simple`                                                                           |
@@ -166,10 +166,10 @@ import club.fernan.api.exception.FernanException;
 client.store().purchase(1, 100, ReferralChoice.none())
         .exceptionally(t -> {
             FernanException e = (FernanException) t.getCause();
-            switch (e.getType()) {
+            switch (e.type()) {
                 case INSUFFICIENT_BALANCE -> notifyTopUp();
-                case COOLDOWN -> scheduleRetry(e.getCooldownEndsAt());
-                case RATE_LIMITED -> backoff(e.getRetryAfter());
+                case COOLDOWN -> scheduleRetry(e.cooldownEndsAt());
+                case RATE_LIMITED -> backoff(e.retryAfter());
                 case AUTHENTICATION -> promptRelogin();
                 default -> log(e);
             }
@@ -182,7 +182,7 @@ client.store().purchase(1, 100, ReferralChoice.none())
 ```java
 import club.fernan.api.locale.FernanLocale;
 
-client.store().getStock(FernanLocale.JA).join();
+client.store().stock(FernanLocale.JA).join();
 ```
 
 Supported: `EN`, `ES`, `DE`, `JA`, `ZH`, `TW`.
@@ -202,8 +202,8 @@ This sends `X-Integration: my-app` on every request.
 
 ## Roadmap
 
-- **Next minor** — wire `UserService.getPreferredReferral` /
-  `setPreferredReferral` once the upstream endpoints are finalized.
+- **Next minor** — wire `UserService.preferredReferral()` /
+  `preferredReferral(String)` once the upstream endpoints are finalized.
 - **Next minor** — reconcile the `X-Integration` header with whatever final
   shape the upstream lands on.
 - **Future** — pluggable retry policy with exponential backoff for transient

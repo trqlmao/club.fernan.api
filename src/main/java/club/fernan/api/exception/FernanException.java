@@ -4,7 +4,7 @@ package club.fernan.api.exception;
  * Unified exception for all fernan.club API errors.
  * Carries an {@link ErrorType} plus optional HTTP status and rate-limit metadata.
  *
- * <p>Prefer switching on {@link #getType()} over inspecting the HTTP status code.
+ * <p>Prefer switching on {@link #type()} over inspecting the HTTP status code.
  *
  * @author trq
  * @since 0.1.0
@@ -75,27 +75,48 @@ public class FernanException extends RuntimeException {
         this.cooldownEndsAt = cooldownEndsAt;
     }
 
-    public ErrorType getType() {
+    /**
+     * The categorized error type. Prefer branching on this over the raw HTTP status.
+     *
+     * @since 0.3.0 (renamed from {@code getType()})
+     */
+    public ErrorType type() {
         return type;
     }
 
-    /** HTTP status code, or {@code -1} if not applicable (e.g. network error). */
-    public int getStatusCode() {
+    /**
+     * HTTP status code, or {@code -1} if not applicable (e.g. network error).
+     *
+     * @since 0.3.0 (renamed from {@code getStatusCode()})
+     */
+    public int statusCode() {
         return statusCode;
     }
 
-    /** Server-generated error ID for 5xx errors, or {@code null}. */
-    public String getErrorId() {
+    /**
+     * Server-generated error ID for 5xx errors, or {@code null}.
+     *
+     * @since 0.3.0 (renamed from {@code getErrorId()})
+     */
+    public String errorId() {
         return errorId;
     }
 
-    /** Seconds until the rate limit resets, or {@code null}. */
-    public Long getRetryAfter() {
+    /**
+     * Seconds until the rate limit resets, or {@code null}.
+     *
+     * @since 0.3.0 (renamed from {@code getRetryAfter()})
+     */
+    public Long retryAfter() {
         return retryAfter;
     }
 
-    /** ISO-8601 timestamp when the cooldown expires, or {@code null}. */
-    public String getCooldownEndsAt() {
+    /**
+     * ISO-8601 timestamp when the cooldown expires, or {@code null}.
+     *
+     * @since 0.3.0 (renamed from {@code getCooldownEndsAt()})
+     */
+    public String cooldownEndsAt() {
         return cooldownEndsAt;
     }
 }

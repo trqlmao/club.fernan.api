@@ -39,7 +39,7 @@ AI-integration guide.
 ## Services
 
 - [UserService.java](https://raw.githubusercontent.com/trqlmao/club.fernan.api/main/src/main/java/club/fernan/api/service/UserService.java): `me`, `apiKey`, `regenerateApiKey` (silently updates client auth + fires `onApiKeyChange`), `redeemKey`.
-- [StoreService.java](https://raw.githubusercontent.com/trqlmao/club.fernan.api/main/src/main/java/club/fernan/api/service/StoreService.java): `getStock`, `getCooldowns`, `purchase`, `getPurchases`, `getPurchase`, `validateReferral`.
+- [StoreService.java](https://raw.githubusercontent.com/trqlmao/club.fernan.api/main/src/main/java/club/fernan/api/service/StoreService.java): `stock`, `cooldowns`, `purchase`, `purchases`, `purchaseDetail`, `validateReferral`.
 - [RefundService.java](https://raw.githubusercontent.com/trqlmao/club.fernan.api/main/src/main/java/club/fernan/api/service/RefundService.java): `create`, `cancel`, `list`, `get`.
 - [ReferralService.java](https://raw.githubusercontent.com/trqlmao/club.fernan.api/main/src/main/java/club/fernan/api/service/ReferralService.java): `create`, `list`, `stats`, `toggle`, `delete` (MediaPlus+ only).
 - [HealthService.java](https://raw.githubusercontent.com/trqlmao/club.fernan.api/main/src/main/java/club/fernan/api/service/HealthService.java): `get`, `simple`.

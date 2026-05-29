@@ -26,7 +26,7 @@ JitPack-hosted. Gradle (Kotlin DSL):
 
 ```kotlin
 repositories { maven { url = uri("https://jitpack.io") } }
-dependencies { implementation("com.github.trqlmao:club.fernan.api:0.2.0") }
+dependencies { implementation("com.github.trqlmao:club.fernan.api:0.3.0") }
 ```
 
 ## The 30-second mental model
@@ -117,7 +117,7 @@ Two ways to avoid this:
 2. **Use `.thenApplyAsync(fn, yourExecutor)` for non-trivial work:**
 
    ```java
-   client.store().getStock()
+   client.store().stock()
        .thenApplyAsync(this::renderToImage, renderPool);
    ```
 
@@ -140,7 +140,7 @@ client.user().regenerateApiKey()
 
 ## Error handling
 
-Every API failure surfaces as `FernanException`. Inspect `getType()`, not the
+Every API failure surfaces as `FernanException`. Inspect `type()`, not the
 raw HTTP status:
 
 ```java
@@ -149,16 +149,16 @@ import club.fernan.api.exception.FernanException;
 
 future.exceptionally(t -> {
     FernanException e = (FernanException) (t instanceof java.util.concurrent.CompletionException ? t.getCause() : t);
-    switch (e.getType()) {
+    switch (e.type()) {
         case AUTHENTICATION       -> /* invalid/missing key */;
         case BANNED               -> /* account is banned */;
         case VALIDATION           -> /* bad request */;
         case NOT_FOUND            -> /* resource gone */;
         case INSUFFICIENT_BALANCE -> /* need to top up */;
-        case COOLDOWN             -> /* e.getCooldownEndsAt() */;
-        case RATE_LIMITED         -> /* e.getRetryAfter() seconds */;
+        case COOLDOWN             -> /* e.cooldownEndsAt() */;
+        case RATE_LIMITED         -> /* e.retryAfter() seconds */;
         case CONFLICT             -> /* duplicate refund */;
-        case SERVER_ERROR         -> /* e.getErrorId() for support */;
+        case SERVER_ERROR         -> /* e.errorId() for support */;
         case NETWORK              -> /* connection failure */;
         default                   -> /* UNKNOWN */;
     }
@@ -195,8 +195,8 @@ client.store().validateReferral(code).thenAccept(v -> {
 Pass `FernanLocale` to endpoints that support it:
 
 ```java
-client.store().getStock(FernanLocale.JA);
-client.store().getCooldowns(FernanLocale.EN);
+client.store().stock(FernanLocale.JA);
+client.store().cooldowns(FernanLocale.EN);
 ```
 
 ## Integration signal

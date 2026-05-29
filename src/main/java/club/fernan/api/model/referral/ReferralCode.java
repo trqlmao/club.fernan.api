@@ -32,7 +32,7 @@ public record ReferralCode(
     }
 
     /** Remaining uses, or {@code -1} if unlimited. */
-    public int getRemainingUses() {
+    public int remainingUses() {
         if (hasUnlimitedUses()) {
             return -1;
         }

@@ -63,9 +63,9 @@ public final class UserService {
      * <p>Endpoint shape not yet documented by the upstream API; implementation will land
      * once the upstream maintainers confirm the path. Calling today throws {@link UnsupportedOperationException}.
      *
-     * @since 0.2.0
+     * @since 0.3.0 (renamed from {@code getPreferredReferral()})
      */
-    public CompletableFuture<String> getPreferredReferral() {
+    public CompletableFuture<String> preferredReferral() {
         throw new UnsupportedOperationException("Preferred-referral endpoint not yet documented by upstream API");
     }
 
@@ -75,9 +75,10 @@ public final class UserService {
      * <p>Endpoint shape not yet documented by the upstream API; implementation will land
      * once the upstream maintainers confirm the path. Calling today throws {@link UnsupportedOperationException}.
      *
-     * @since 0.2.0
+     * @param code the referral code to store as the user's preference
+     * @since 0.3.0 (renamed from {@code setPreferredReferral(String)})
      */
-    public CompletableFuture<Void> setPreferredReferral(String code) {
+    public CompletableFuture<Void> preferredReferral(String code) {
         throw new UnsupportedOperationException("Preferred-referral endpoint not yet documented by upstream API");
     }
 }
