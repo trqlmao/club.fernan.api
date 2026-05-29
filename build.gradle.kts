@@ -53,7 +53,7 @@ tasks.test {
 
 spotless {
     java {
-        target("src/**/*.java")
+        target("src/**/*.java", "examples/**/*.java")
         palantirJavaFormat("2.50.0")
         removeUnusedImports()
         trimTrailingWhitespace()
