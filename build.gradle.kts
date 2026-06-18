@@ -1,7 +1,7 @@
 plugins {
     `java-library`
     `maven-publish`
-    id("com.diffplug.spotless") version "6.25.0"
+    id("com.diffplug.spotless") version "8.7.0"
 }
 
 java {
