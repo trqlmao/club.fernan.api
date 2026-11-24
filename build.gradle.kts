@@ -71,7 +71,7 @@ publishing {
             from(components["java"])
             pom {
                 name.set("club.fernan.api")
-                description.set("Drop-in Java client for the fernan.club REST API")
+                description.set("Unofficial Java client for the fernan.club REST API")
                 url.set("https://github.com/trqlmao/club.fernan.api")
                 licenses {
                     license {

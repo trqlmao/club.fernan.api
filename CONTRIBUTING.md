@@ -1,9 +1,8 @@
 # Contributing to club.fernan.api
 
-Thanks for considering a contribution. This library is an unofficial Java client
-for the [fernan.club](https://fernan.club) API. Contributions are welcome —
-bug reports, feature requests, model additions when the upstream API evolves,
-docs improvements, and integration recipes.
+club.fernan.api is an unofficial Java client for the
+[fernan.club](https://fernan.club) API. Bug reports, fixes, docs and model updates
+are welcome. Read the [disclaimer](DISCLAIMER.md) first.
 
 ## Quick start
 
@@ -14,7 +13,7 @@ cd club.fernan.api
 ```
 
 The build provisions JDK 17 automatically via the Gradle toolchain plugin
-(foojay resolver) — you do not need JDK 17 pre-installed locally.
+(foojay resolver). Run Gradle itself on JDK 17 or 21.
 
 ## Ways to contribute
 
@@ -52,7 +51,7 @@ Every commit subject **must** follow Conventional Commits:
 ```
 <type>(<optional scope>): <imperative summary, lowercase, no period>
 
-<optional body — wrap at ~72 chars — explain the why>
+<optional body, wrap at ~72 chars: explain the why>
 
 <optional Fixes #123 or BREAKING CHANGE: ... footer>
 ```
@@ -64,7 +63,7 @@ Every commit subject **must** follow Conventional Commits:
 | `feat`     | A new user-visible feature or public API surface                   |
 | `fix`      | A bug fix                                                          |
 | `docs`     | Documentation only (README, CONTRIBUTING, javadoc, examples)       |
-| `style`    | Formatting, whitespace — no logic change                           |
+| `style`    | Formatting, whitespace, no logic change                           |
 | `fmt`      | Synonym for `style` when running the formatter                     |
 | `refactor` | Code change that is neither a feature nor a fix                    |
 | `perf`     | Performance improvement                                            |
@@ -78,11 +77,11 @@ Every commit subject **must** follow Conventional Commits:
 
 Keep the scope short and pick from the existing surface where possible:
 
-- `models` / `model(<area>)` — `model(store)`, `model(refund)`, etc.
-- `http` — transport and response handling
-- `auth` — authentication strategies
-- `service(<area>)` — `service(store)`, `service(refunds)`, etc.
-- `exception` — error types and mapping
+- `models` / `model(<area>)`: `model(store)`, `model(refund)`, etc.
+- `http`: transport and response handling
+- `auth`: authentication strategies
+- `service(<area>)`: `service(store)`, `service(refunds)`, etc.
+- `exception`: error types and mapping
 - `integration`, `locale`, `referral`
 - `build`, `ci`, `examples`, `docs`
 
@@ -92,8 +91,8 @@ Keep the scope short and pick from the existing surface where possible:
 feat(models): add Product.imageUrl
 fix(http): preserve cooldown_ends_at when 429 carries it
 docs(examples): replace placeholder API key with env var
-build(gradle): bump Spotless to 6.26.0
-ci: pin actions/setup-java to v4
+build(gradle): bump Spotless to 8.10.2
+ci: pin actions/setup-java to v6
 test(refund): cover handled_at null on pending refund
 fmt: apply spotlessApply after Java 21 syntax updates
 ```
@@ -103,7 +102,7 @@ fmt: apply spotlessApply after Java 21 syntax updates
 - Subject under ~72 chars; body wrapped at ~72 chars per line.
 - Lowercase after the colon (`feat: add foo`, not `feat: Add foo`).
 - No trailing period in the subject.
-- Imperative mood (`add`, `fix`, `remove` — not `added`, `fixes`, `removed`).
+- Imperative mood (`add`, `fix`, `remove`: not `added`, `fixes`, `removed`).
 - One logical change per commit. If multiple types fit, split the commit.
 - Breaking changes add `!` after the type/scope and a `BREAKING CHANGE:` footer.
 - Do **not** add `Co-Authored-By: Claude ...` (or any AI-attribution) trailers.
@@ -113,7 +112,7 @@ fmt: apply spotlessApply after Java 21 syntax updates
 
 ### Language level
 
-- Java 17 source level. No language features above Java 17 — the project
+- Java 17 source level. No language features above Java 17: the project
   compiles with `--release 17` so newer features will fail the build.
 
 ### Method naming
@@ -122,7 +121,7 @@ fmt: apply spotlessApply after Java 21 syntax updates
   Actions (verbs): `regenerateApiKey()`, `purchase()`, `redeemKey()`.
   This matches modern Java SDKs (Stripe, AWS v2, OkHttp, Retrofit, Google Cloud).
 - **Legacy `get*` / `set*` methods stay until intentionally refactored.** Do
-  not mix conventions when adding methods to a class — pick one to match the
+  not mix conventions when adding methods to a class. Pick one to match the
   surrounding code, or do the rename pass as a separate `refactor:` commit.
 - The service-accessor pattern (`client.user().me()`) is canonical. The
   service field on `FernanClient` is named after its role
@@ -131,7 +130,7 @@ fmt: apply spotlessApply after Java 21 syntax updates
 
 ### Builders
 
-- Bare method names, fluent return — `builder.apiKey(k).integration("x").build()`.
+- Bare method names, fluent return: `builder.apiKey(k).integration("x").build()`.
 - No `withX` prefixes (that's the older Guava-style copy-builder convention;
   we want modern accumulating builders).
 - Validate required fields in `build()`, not in setters.
@@ -139,7 +138,7 @@ fmt: apply spotlessApply after Java 21 syntax updates
 ### Records and JSON
 
 - **All DTOs are records.** Immutable by construction.
-- **Every record field gets `@SerializedName("<wire_name>")` — no exceptions.**
+- **Every record field gets `@SerializedName("<wire_name>")`, no exceptions.**
   Even when the Java name matches the JSON name verbatim. This is for
   obfuscation safety: consumers that shade + obfuscate the jar (ProGuard,
   R8, ZKM) will rename Java fields, and Gson would silently fail to
@@ -164,13 +163,13 @@ shipped in the published jar.
   validation is desired.
 
 **Do NOT use Lombok for:**
-- **Records** — they already provide fluent accessors, value semantics,
+- **Records**: they already provide fluent accessors, value semantics,
   `equals`, `hashCode`, `toString`. Lombok conflicts with records.
-- **`FernanClientBuilder`** — hand-written reads more clearly than `@Builder`
+- **`FernanClientBuilder`**: hand-written reads more clearly than `@Builder`
   on a target class, and the public surface stays trivial to javadoc.
-- **`JdkHttpTransport`** — constructor does real init work (executor,
+- **`JdkHttpTransport`**: constructor does real init work (executor,
   HTTP client, Gson configuration).
-- **`FernanException`** — six overloaded constructors with distinct
+- **`FernanException`**: six overloaded constructors with distinct
   semantic shapes; Lombok would obscure them.
 
 ### Errors
@@ -189,13 +188,13 @@ shipped in the published jar.
   wraps exceptions in `CompletionException`. Examples in `docs/` and
   `examples/` lead with chaining, not `.join()`.
 - Continuations attached via `.thenApply` / `.thenAccept` (without `Async`)
-  run on the thread that completed the future — which for HTTP responses
-  is the transport's executor. For non-trivial continuation work, use
+  run on the thread that completed the future (for HTTP responses,
+  the transport's executor). For non-trivial continuation work, use
   `.thenApplyAsync(fn, yourExecutor)` so transport threads are not
   starved.
 - Callers wanting full control over completion threads pass an executor via
   `FernanClientBuilder.executor(...)`. When set, the client does NOT shut
-  the executor down — the caller owns its lifecycle.
+  the executor down; the caller owns its lifecycle.
 
 ### Comments and Javadoc
 
@@ -205,17 +204,17 @@ shipped in the published jar.
 
 These are two independent axes:
 
-- **Code style** follows **Google Java Style** conventions — naming, structure,
+- **Code style** follows **Google Java Style** conventions: naming, structure,
   import ordering, and Javadoc coverage (the rules in this section and above).
 - **Formatting** (whitespace, line wrapping; a 4-space, 120-column profile) is
   owned by **Spotless running Palantir Java Format**. Run `./gradlew
-  spotlessApply` before committing — CI rejects misformatted code. Let the
+  spotlessApply` before committing. CI rejects misformatted code. Let the
   formatter reformat rather than hand-formatting.
 
 ## Adding a new endpoint
 
 1. Add the model record(s) under `src/main/java/club/fernan/api/model/<domain>/`
-   with `@SerializedName` on every record parameter — no exceptions.
+   with `@SerializedName` on every record parameter, no exceptions.
 2. Add the method to the appropriate service in
    `src/main/java/club/fernan/api/service/`.
 3. Surface a top-level shortcut on `FernanClient` only if the endpoint is

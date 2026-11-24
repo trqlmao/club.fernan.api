@@ -10,7 +10,7 @@ two different things, and security issues should be reported to the right party.
 |-------------------------------------------------------------------------|--------------------------------------------------------------------|
 | Vulnerability in the upstream **fernan.club service / API** (auth bypass, data exposure, server bug, etc.) | Contact the fernan.club admins directly (Discord / official support channel). Do **not** post to this repo. |
 | Vulnerability in **this library's code** (parsing, response handling, header injection, denial-of-service through malformed input, dependency vulnerabilities) | Use [GitHub's private security advisory feature](https://github.com/trqlmao/club.fernan.api/security/advisories/new) for this repository. |
-| Leaked API keys or credentials of yours                                 | Rotate via the fernan.club dashboard immediately, then contact the fernan.club admins. This library never logs or transmits secrets, but a rotation is the right first move. |
+| Leaked API keys or credentials of yours                                 | Regenerate the key on fernan.club first, then contact fernan.club. The library sends the key only to the configured base URL and does not log it. |
 
 ## What counts as a library vulnerability
 
@@ -30,7 +30,7 @@ Examples of things worth reporting privately on this repo:
   validation rejections). Those are normal behavior surfaced through
   `FernanException`.
 - Account bans, refund denials, or other policy actions taken by fernan.club.
-- Disagreement with how the upstream API works — that's an upstream concern.
+- Disagreement with how the upstream API works: that is for fernan.club.
 
 ## Disclosure handling
 
@@ -46,6 +46,5 @@ will not be backported; bump to the latest before reporting.
 
 | Version | Supported          |
 |---------|--------------------|
-| 0.2.x   | :white_check_mark: |
-| 0.1.x   | :x:                |
-| < 0.1   | :x:                |
+| 0.4.x   | :white_check_mark: |
+| < 0.4   | :x:                |

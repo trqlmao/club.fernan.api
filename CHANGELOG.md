@@ -7,14 +7,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Planned
+## [0.4.0]
 
-- Wire `UserService.preferredReferral()` / `preferredReferral(String)` once the
-  upstream endpoint paths are published.
-- Reconcile `X-Integration` header with the upstream integration field once
-  finalized.
+Includes the 0.3.0 changes, which were never tagged or published.
 
-## [0.3.0] — 2026-05-28
+### Added
+
+- `FR`, `PL` and `RU` locales.
+- `productDescription` on `Cooldown`, `PurchaseHistory`, `PurchaseDetail`, `Refund`
+  and `RefundDetail`.
+- `refundId` and `refundAmount` on `PurchaseDetail`; `accessToken` and
+  `profileControls` on its products; `products` on `RefundDetail`.
+
+### Changed
+
+- **BREAKING**: the records above have new components, so code that constructs them
+  directly must be updated.
+- Rewrote the README, disclaimer and agent guide. Endpoints missing from the public
+  API reference are marked as such.
+- Updated Gradle, Spotless, Lombok, JUnit and the CI actions.
+
+### Fixed
+
+- Connection failures now complete with `FernanException` of type `NETWORK`.
+- The default `User-Agent` reports the right version.
+
+## [0.3.0] (unpublished)
 
 ### Changed
 
@@ -34,7 +52,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Spotless; code style continues to follow Google Java Style conventions. The
   `examples/` sources are now covered by `spotlessCheck`. No API impact.
 
-## [0.2.0] — 2026-05-28
+## [0.2.0] - 2026-05-28
 
 ### Added
 
@@ -75,7 +93,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `.executor(...)` own the lifecycle; `client.shutdown()` is a no-op for
   caller-supplied executors.
 
-## [0.1.0] — 2026-05-28
+## [0.1.0] - 2026-05-28
 
 ### Added
 

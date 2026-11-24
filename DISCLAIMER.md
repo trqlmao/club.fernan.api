@@ -1,81 +1,52 @@
 # Disclaimer
 
-This project is an **unofficial, independent, community-maintained** Java
-client for the [fernan.club](https://fernan.club) REST API. It is **not
-affiliated with, endorsed by, sponsored by, or otherwise connected to**
-fernan.club, its operators, or its administrators in any way.
+club.fernan.api is an unofficial Java client for the fernan.club REST API. It is
+not a fernan.club project. fernan.club does not run or endorse it, and
+nothing here speaks for fernan.club. The name describes what the library connects
+to; names and trademarks belong to their owners.
 
-## What this project is
+## Why it exists
 
-A drop-in Java library that translates fernan.club's publicly addressable
-HTTP endpoints into typed Java method calls. It is published openly so
-third-party Java applications can integrate with the service without each
-maintainer having to re-implement the same HTTP/JSON plumbing.
+It is published for educational purposes, as an example of a typed, asynchronous
+Java client for a JSON API. Publishing it is not a recommendation to use
+fernan.club or to buy anything.
 
-## What this project is not
+## What the maintainer does not do
 
-- An endorsement of fernan.club, its products, its pricing, or its policies.
-- A guarantee that the upstream service is correctly implemented, lawful in
-  any particular jurisdiction, available, reliable, secure, honest, or fit
-  for any particular purpose.
-- A statement that any goods or services delivered by fernan.club are
-  lawfully owned or freely transferable to the end user.
-- An invitation to violate the terms of service of fernan.club, of any
-  account provider whose property is exchanged through fernan.club
-  (including but not limited to Mojang Studios and Microsoft for Minecraft
-  accounts), or of any other third party.
+The maintainer does not:
 
-## Maintainer's relationship to fernan.club
+- run, host or control fernan.club or its API;
+- supply, source, check or deliver anything it sells;
+- know where those products come from, who owned them before, or whether they are
+  legal to sell, buy or use where you live;
+- handle orders, payments, refunds, balances or support.
 
-The maintainer of this repository:
+## Referral code
 
-- has no business, financial, or operational relationship with fernan.club;
-- receives no compensation, referral revenue, share of sales, or other
-  consideration from fernan.club in connection with this project;
-- does not operate, control, audit, or have privileged insight into
-  fernan.club's back-end systems, account sources, fulfillment workflow,
-  refund handling, or terms of service;
-- maintains this wrapper purely as community tooling.
+Any fernan.club user can create referral codes. The maintainer has one, and
+fernan.club credits a percentage of a purchase to the owner of the code used. The
+code is not in this library or its examples. The library never adds a code to a
+purchase, and calls you make with it earn the maintainer nothing unless you enter
+that code yourself.
 
-## Provided as-is
+## Your responsibility
 
-This software is provided **AS IS, WITHOUT WARRANTY OF ANY KIND**, express
-or implied, including but not limited to warranties of merchantability,
-fitness for a particular purpose, and non-infringement. The full
-[MIT License](LICENSE) text governs.
+You decide whether and how to use this library. That includes:
 
-In plain language: the library does its best to construct correct HTTP
-requests and parse correct HTTP responses against the API as documented at
-the time of release. It cannot, and does not, vouch for the upstream
-service's behavior, security, lawfulness, or honesty. If the upstream
-service does something you did not expect, that is between you and the
-upstream service.
+- following fernan.club's terms;
+- following the terms of any company whose accounts or products are involved, such
+  as Microsoft and Mojang. Their terms may not allow accounts to be sold or shared;
+- following the law where you live;
+- what you buy and what you do with it.
 
-## User responsibility
+Do not use this library to access an account or data you have no right to use.
 
-By using this library, you acknowledge and agree that you are solely
-responsible for:
+## No warranty
 
-1. Reading and complying with fernan.club's terms of service.
-2. Reading and complying with the terms of service of any third party
-   whose property you interact with through fernan.club — including, where
-   applicable, Mojang Studios, Microsoft, or any other account provider.
-3. The lawfulness in your jurisdiction of (a) the goods or services you
-   acquire from fernan.club and (b) any actions you take using software
-   built with this library.
-4. Any consequences — civil, criminal, contractual, or otherwise — that
-   arise from your use of this library or the upstream service.
+The software is provided as is under the [MIT License](LICENSE), with no warranty.
+The API can change or stop working at any time. Nothing here is legal advice.
 
-## Educational / informational purpose
+## Concerns
 
-This project is published for **educational and integrational purposes**:
-to demonstrate how to design a typed Java client for a JSON HTTP API and
-to give downstream developers a clean, tested starting point. Nothing in
-this repository should be read as legal, financial, or commercial advice.
-
-## Reporting concerns
-
-If you believe the existence of this wrapper itself — rather than any
-particular use of it — infringes on rights you hold, please open an issue
-on this repository or use the contacts in [SECURITY.md](SECURITY.md). Good-
-faith requests will be reviewed promptly.
+If something in this repository affects your rights, open an issue, or use the
+contact in [SECURITY.md](SECURITY.md) to raise it privately.

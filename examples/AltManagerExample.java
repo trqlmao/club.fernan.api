@@ -1,5 +1,4 @@
 import club.fernan.api.FernanClient;
-import club.fernan.api.exception.ErrorType;
 import club.fernan.api.exception.FernanException;
 import club.fernan.api.model.referral.ReferralChoice;
 import club.fernan.api.model.store.Product;
@@ -10,7 +9,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Canonical reference for wiring this library into a client's alt-storage layer.
+ * Shows a full purchase flow that hands delivered accounts to the host application.
  *
  * <p>Defines a tiny {@link AltStore} interface representing whatever your host
  * application uses to remember credentials. Walks through the typical flow
@@ -111,7 +110,7 @@ public final class AltManagerExample {
                         case INSUFFICIENT_BALANCE -> "Top up the account balance and retry.";
                         case COOLDOWN -> "Cooldown ends at " + e.cooldownEndsAt();
                         case RATE_LIMITED -> "Retry after " + e.retryAfter() + "s";
-                        case AUTHENTICATION -> "Bad API key. Regenerate via the dashboard.";
+                        case AUTHENTICATION -> "Bad API key. Create a new one on the API page.";
                         case BANNED -> "Account is banned.";
                         case VALIDATION -> "Invalid request: " + e.getMessage();
                         case NOT_FOUND -> "Resource missing.";
@@ -123,10 +122,5 @@ public final class AltManagerExample {
             return;
         }
         System.err.println("Unhandled failure: " + (cause == null ? t : cause));
-    }
-
-    @SuppressWarnings("unused")
-    private static ErrorType _ignore() {
-        return ErrorType.UNKNOWN;
     }
 }

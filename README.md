@@ -7,30 +7,18 @@
 [![Issues](https://img.shields.io/github/issues/trqlmao/club.fernan.api)](https://github.com/trqlmao/club.fernan.api/issues)
 [![Stars](https://img.shields.io/github/stars/trqlmao/club.fernan.api?style=flat)](https://github.com/trqlmao/club.fernan.api/stargazers)
 
-Drop-in Java client for the [fernan.club](https://fernan.club) REST API.
-Async-first, JDK 17+, zero dependencies beyond Gson, safe to embed in mods,
-launchers, or standalone JVM apps.
+An unofficial Java client for the [fernan.club](https://fernan.club) REST API.
+Java 17 or newer, Gson as the only dependency.
 
-> **Unofficial.** This project is community tooling. It is **not affiliated
-> with, endorsed by, or sponsored by** fernan.club. The maintainer receives
-> no compensation from fernan.club, does not operate any part of the
-> upstream service, and does not vouch for the goods or services it
-> delivers. Read the full [DISCLAIMER](DISCLAIMER.md) before using.
-
-- One `FernanClient` entry point exposing five typed services
-  (`user`, `store`, `refunds`, `referrals`, `health`).
-- All endpoints return `CompletableFuture<T>`.
-- One `FernanException` with a typed `ErrorType` enum covering every API
-  error mode (auth, banned, validation, not-found, conflict, cooldown,
-  rate-limit, server error).
-- Explicit `ReferralChoice` type — the library never silently auto-applies a
-  referral code; the caller decides per call.
-- Optional `X-Integration` partner-attribution signal for client devs who want
-  fernan.club to know who's driving traffic.
+> **Unofficial.** This is not a fernan.club project. fernan.club does not run
+> or endorse it. It is published as an educational example of a typed
+> Java API client. The maintainer does not supply what the store sells, and does
+> not know where it comes from or whether it is legal to buy or use where you
+> live. Read the [disclaimer](DISCLAIMER.md) first.
 
 ## Install
 
-### Gradle (Kotlin DSL)
+Gradle:
 
 ```kotlin
 repositories {
@@ -38,197 +26,140 @@ repositories {
 }
 
 dependencies {
-    implementation("com.github.trqlmao:club.fernan.api:0.3.0")
+    implementation("com.github.trqlmao:club.fernan.api:0.4.0")
 }
 ```
 
-### Gradle (Groovy DSL)
-
-```groovy
-repositories {
-    maven { url 'https://jitpack.io' }
-}
-
-dependencies {
-    implementation 'com.github.trqlmao:club.fernan.api:0.3.0'
-}
-```
-
-### Maven
+Maven:
 
 ```xml
-<repositories>
-  <repository>
-    <id>jitpack.io</id>
-    <url>https://jitpack.io</url>
-  </repository>
-</repositories>
+<repository>
+  <id>jitpack.io</id>
+  <url>https://jitpack.io</url>
+</repository>
 
 <dependency>
   <groupId>com.github.trqlmao</groupId>
   <artifactId>club.fernan.api</artifactId>
-  <version>0.3.0</version>
+  <version>0.4.0</version>
 </dependency>
 ```
-
-## For AI agents
-
-This library is intentionally structured so AI coding assistants
-(Claude Code, Copilot, Cursor, Cline, etc.) can wire it into your project in
-a single pass. If you're driving an agent, point it at:
-
-- [**`CLAUDE.md`**](CLAUDE.md) — full integration guide written for AI
-  consumption. Covers patterns, pitfalls, and threading.
-- [**`llms.txt`**](llms.txt) — structured index of every doc and example,
-  per the [llmstxt.org](https://llmstxt.org) convention. Suitable for an
-  agent to ingest as canonical context.
-- [**`examples/`**](examples/) — three canonical integration patterns
-  (minimal, alt-manager, error handling).
-
-The surface area an agent has to learn is deliberately small: one entry point
-(`FernanClient`), five typed services, one exception (`FernanException`) with
-a typed `ErrorType` enum, and an explicit `ReferralChoice` value type that
-prevents an agent (or human) from silently auto-applying a referral code.
 
 ## Quickstart
 
 ```java
-import club.fernan.api.FernanClient;
-import club.fernan.api.model.referral.ReferralChoice;
-
 FernanClient client = FernanClient.builder()
         .apiKey(System.getenv("FERNAN_KEY"))
         .userAgent("my-app/1.0")
-        .integration("my-app")
         .build();
 
 client.user().me()
-        .thenAccept(me -> System.out.println("balance: " + me.balance()));
+        .thenAccept(me -> System.out.println("Balance: " + me.balance()))
+        .exceptionally(t -> { t.printStackTrace(); return null; });
 
-client.store().purchase(1, 5, ReferralChoice.none())
-        .thenAccept(this::onPurchase)
-        .exceptionally(t -> { onFailure(t); return null; });
-
-// ... later, on app exit:
+// On exit:
 client.shutdown();
 ```
 
-> **Don't use `.join()` outside CLI/script contexts.** It blocks the calling
-> thread (catastrophic on a render thread, Netty event loop, or game tick)
-> and wraps exceptions in `CompletionException`. Chain with `.thenAccept` /
-> `.exceptionally` instead. See [`CLAUDE.md`](CLAUDE.md#async-and-threading)
-> for the threading model.
+Your API key can spend your balance and read your account data. Keep it out of
+source control and logs.
 
-## Services
+Build one client and reuse it. Every call returns a `CompletableFuture`, so chain
+it. `.join()` blocks the calling thread, which is fine in a script and a bad idea
+on a UI, render or game thread.
 
-| Service              | Endpoints                                                                                 |
-|----------------------|-------------------------------------------------------------------------------------------|
-| `client.user()`      | `me`, `apiKey`, `regenerateApiKey`, `redeemKey`                                           |
-| `client.store()`     | `stock`, `cooldowns`, `purchase`, `purchases`, `purchaseDetail`, `validateReferral`        |
-| `client.refunds()`   | `create`, `cancel`, `list`, `get`                                                         |
-| `client.referrals()` | `create`, `list`, `stats`, `toggle`, `delete` (MediaPlus+)                                |
-| `client.health()`    | `get`, `simple`                                                                           |
+More in [`examples/`](examples/).
 
-## Recipes
+## Endpoints
 
-See [`examples/`](examples/) for self-contained snippets:
+These are in fernan.club's API reference:
 
-- [`MinimalExample.java`](examples/MinimalExample.java) — smallest possible
-  "build a client, fetch user, print balance".
-- [`AltManagerExample.java`](examples/AltManagerExample.java) — canonical
-  flow for clients with an alt-storage layer: list stock → prompt for referral
-  → purchase → decode credentials → register with a host-app `AltStore`.
-- [`ErrorHandlingExample.java`](examples/ErrorHandlingExample.java) —
-  recovering from rate limits, cooldowns, and insufficient-balance failures.
+| Method | Request |
+|---|---|
+| `user().me()` | `GET /user/me` |
+| `user().apiKey()` | `GET /user/key` |
+| `user().regenerateApiKey()` | `POST /user/key/regenerate` |
+| `user().redeemKey(key)` | `POST /user/redeem` |
+| `store().stock()` | `GET /store/stock` |
+| `store().cooldowns()` | `GET /store/cooldown` |
+| `store().purchase(productId, amount, referral)` | `POST /store/purchase` |
+| `store().purchases(limit, offset)` | `GET /store/purchases` |
+| `store().purchaseDetail(id)` | `GET /store/purchases/:id` |
+| `refunds().create(purchaseId, uuids, reason)` | `POST /store/refunds` |
+| `refunds().list(limit, offset)` | `GET /store/refunds` |
+| `refunds().get(id)` | `GET /store/refunds/:id` |
 
-## Referral codes
+These are not in it and may change or stop working:
 
-The library never silently applies a referral code. Every purchase requires an
-explicit `ReferralChoice`:
+| Method | Request |
+|---|---|
+| `store().validateReferral(code)` | `POST /store/referral/validate` |
+| `refunds().cancel(id)` | `POST /store/refunds/cancel` |
+| `referrals().create`, `list`, `stats`, `toggle`, `delete` | `/referrals/*` |
+| `health().get()`, `simple()` | `GET /health`, `GET /health/simple` |
 
-```java
-// Apply a code the user selected:
-client.store().purchase(productId, qty, ReferralChoice.of("creator123"));
+`stock` and `cooldowns` also take a `FernanLocale`: `EN`, `ES`, `DE`, `FR`, `JA`,
+`PL`, `RU`, `ZH` or `TW`.
 
-// User explicitly declined / no preference:
-client.store().purchase(productId, qty, ReferralChoice.none());
-```
+## Errors
 
-If you surface referrals to end users, prompt them to choose rather than
-auto-defaulting to your own code.
-
-## Error handling
+A failed request completes with a `FernanException`. Check `type()`:
 
 ```java
-import club.fernan.api.exception.ErrorType;
-import club.fernan.api.exception.FernanException;
-
-client.store().purchase(1, 100, ReferralChoice.none())
+client.store().purchase(1, 2, ReferralChoice.none())
         .exceptionally(t -> {
-            FernanException e = (FernanException) t.getCause();
-            switch (e.type()) {
-                case INSUFFICIENT_BALANCE -> notifyTopUp();
-                case COOLDOWN -> scheduleRetry(e.cooldownEndsAt());
-                case RATE_LIMITED -> backoff(e.retryAfter());
-                case AUTHENTICATION -> promptRelogin();
-                default -> log(e);
+            Throwable cause = t instanceof CompletionException ? t.getCause() : t;
+            if (cause instanceof FernanException e) {
+                switch (e.type()) {
+                    case COOLDOWN -> System.out.println("Wait until " + e.cooldownEndsAt());
+                    case RATE_LIMITED -> System.out.println("Retry in " + e.retryAfter() + "s");
+                    default -> System.out.println(e.getMessage());
+                }
             }
             return null;
         });
 ```
 
-## Locales
+| Type | When |
+|---|---|
+| `NETWORK` | No response from the server |
+| `AUTHENTICATION` | 401, or 403 without a ban |
+| `BANNED` | 403 with a ban |
+| `VALIDATION` | 400 or 422 |
+| `NOT_FOUND` | 404 |
+| `CONFLICT` | 409 |
+| `COOLDOWN` | 429 with a cooldown end time |
+| `RATE_LIMITED` | Any other 429; `retryAfter()` may be null |
+| `SERVER_ERROR` | 500, 502, 503 or 504 |
+| `UNKNOWN` | Anything else, including a body that is not JSON |
 
-```java
-import club.fernan.api.locale.FernanLocale;
+Do not retry a purchase after `NETWORK` or `SERVER_ERROR` without checking
+`purchases()` first. The order may have gone through.
 
-client.store().stock(FernanLocale.JA).join();
-```
+## Referral codes
 
-Supported: `EN`, `ES`, `DE`, `JA`, `ZH`, `TW`.
+`purchase` always takes a `ReferralChoice`: `ReferralChoice.of(code)` or
+`ReferralChoice.none()`. The library contains no referral code and never adds one.
+If your app uses one, let the user choose, and tell them if you earn from it.
 
-## Integration signal
+## Identifying your app
 
-Identify your application to fernan.club without claiming referral revenue:
+`.integration("my-app")` on the builder adds an `X-Integration: my-app` header. It
+is off by default, carries no referral, and is not in the API reference, so the
+server may ignore it.
 
-```java
-FernanClient.builder()
-        .apiKey(key)
-        .integration("my-app")
-        .build();
-```
+## For AI agents
 
-This sends `X-Integration: my-app` on every request.
+Read [CLAUDE.md](CLAUDE.md) for how to use the library and [llms.txt](llms.txt)
+for an index of the repo.
 
-## Roadmap
+## Help
 
-- **Next minor** — wire `UserService.preferredReferral()` /
-  `preferredReferral(String)` once the upstream endpoints are finalized.
-- **Next minor** — reconcile the `X-Integration` header with whatever final
-  shape the upstream lands on.
-- **Future** — pluggable retry policy with exponential backoff for transient
-  5xx + 429 responses.
-
-See [CHANGELOG.md](CHANGELOG.md) for released changes.
-
-## Requirements
-
-- Java 17 or newer (compiled with `--release 17`; verified on 17, 21, and 25).
-- One transitive dependency: [Gson](https://github.com/google/gson) 2.11+.
-
-## Community
-
-- [Discussions](https://github.com/trqlmao/club.fernan.api/discussions) for
-  questions and integration recipes.
-- [Issues](https://github.com/trqlmao/club.fernan.api/issues) for bugs and
-  feature requests (read [CONTRIBUTING.md](CONTRIBUTING.md) first).
-- [Security policy](SECURITY.md) for vulnerability reports.
-- [Disclaimer](DISCLAIMER.md) — unaffiliated, unendorsed, AS-IS.
-
-## Activity
-
-![Repobeats analytics image](https://repobeats.axiom.co/api/embed/8dbeaa4a26284a94efee6b89ac54f0f11fad9ef1.svg "Repobeats analytics image")
+- Library bugs: [issues](https://github.com/trqlmao/club.fernan.api/issues)
+- Library questions: [discussions](https://github.com/trqlmao/club.fernan.api/discussions)
+- Security: [SECURITY.md](SECURITY.md)
+- Orders, refunds, balances or accounts: fernan.club. The maintainer cannot help.
 
 ## License
 
-[MIT](LICENSE).
+[MIT](LICENSE). Changes are in the [changelog](CHANGELOG.md).

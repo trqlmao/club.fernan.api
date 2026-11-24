@@ -1,47 +1,38 @@
 # club.fernan.api
 
-> Drop-in Java client for the fernan.club REST API. JDK 17+, single
-> transitive dependency (Gson), async-first via `CompletableFuture`.
-> Designed to be embedded in Minecraft mods, launchers, or any JVM
-> application — and structured so that AI coding assistants can integrate
-> it confidently in a single pass.
-
-The library exposes one entry point (`FernanClient`) and five typed services
-(`user`, `store`, `refunds`, `referrals`, `health`). All failures surface
-through a single `FernanException` carrying a typed `ErrorType` enum.
-Referral codes are gated behind an explicit `ReferralChoice` value type so
-agents cannot silently apply a default. See `CLAUDE.md` for the full
-AI-integration guide.
+> Unofficial, educational Java client for the fernan.club REST API. Java 17+,
+> Gson only, asynchronous. Not run or endorsed by fernan.club.
 
 ## Docs
 
-- [README](https://raw.githubusercontent.com/trqlmao/club.fernan.api/main/README.md): Overview, install, quickstart, services map.
-- [CLAUDE.md](https://raw.githubusercontent.com/trqlmao/club.fernan.api/main/CLAUDE.md): Integration guide written for AI assistants. Covers patterns, pitfalls, threading.
-- [CONTRIBUTING.md](https://raw.githubusercontent.com/trqlmao/club.fernan.api/main/CONTRIBUTING.md): PR workflow, Conventional Commits, coding conventions.
+- [README](https://raw.githubusercontent.com/trqlmao/club.fernan.api/main/README.md): Install, quickstart, endpoints, errors.
+- [CLAUDE.md](https://raw.githubusercontent.com/trqlmao/club.fernan.api/main/CLAUDE.md): How to use and change the library.
+- [DISCLAIMER.md](https://raw.githubusercontent.com/trqlmao/club.fernan.api/main/DISCLAIMER.md): What this project is not, and who is responsible for what.
+- [CONTRIBUTING.md](https://raw.githubusercontent.com/trqlmao/club.fernan.api/main/CONTRIBUTING.md): Pull requests, commits, code conventions.
 - [SECURITY.md](https://raw.githubusercontent.com/trqlmao/club.fernan.api/main/SECURITY.md): Vulnerability reporting policy.
-- [CHANGELOG.md](https://raw.githubusercontent.com/trqlmao/club.fernan.api/main/CHANGELOG.md): Released versions and unreleased plans.
+- [CHANGELOG.md](https://raw.githubusercontent.com/trqlmao/club.fernan.api/main/CHANGELOG.md): Changes per version.
 
 ## Examples
 
-- [MinimalExample.java](https://raw.githubusercontent.com/trqlmao/club.fernan.api/main/examples/MinimalExample.java): Smallest possible "build client, fetch user, print balance" program.
-- [AltManagerExample.java](https://raw.githubusercontent.com/trqlmao/club.fernan.api/main/examples/AltManagerExample.java): Canonical alt-storage integration — list stock, validate referral, purchase, decode credentials, hand off to a host-app `AltStore` interface.
-- [ErrorHandlingExample.java](https://raw.githubusercontent.com/trqlmao/club.fernan.api/main/examples/ErrorHandlingExample.java): Retry-aware handling for `RATE_LIMITED`, `COOLDOWN`, and `INSUFFICIENT_BALANCE`.
+- [MinimalExample.java](https://raw.githubusercontent.com/trqlmao/club.fernan.api/main/examples/MinimalExample.java): Fetch the user and print the balance.
+- [AltManagerExample.java](https://raw.githubusercontent.com/trqlmao/club.fernan.api/main/examples/AltManagerExample.java): Full purchase flow that hands delivered accounts to the host app.
+- [ErrorHandlingExample.java](https://raw.githubusercontent.com/trqlmao/club.fernan.api/main/examples/ErrorHandlingExample.java): Handling `RATE_LIMITED` and `COOLDOWN`.
 
 ## Core source
 
 - [FernanClient.java](https://raw.githubusercontent.com/trqlmao/club.fernan.api/main/src/main/java/club/fernan/api/FernanClient.java): Top-level facade exposing the five services.
 - [FernanClientBuilder.java](https://raw.githubusercontent.com/trqlmao/club.fernan.api/main/src/main/java/club/fernan/api/FernanClientBuilder.java): Builder with `apiKey`, `userAgent`, `integration`, `baseUrl`, `connectTimeoutMillis`, `onApiKeyChange`, `executor`.
 - [FernanException.java](https://raw.githubusercontent.com/trqlmao/club.fernan.api/main/src/main/java/club/fernan/api/exception/FernanException.java): Single exception class for all API errors.
-- [ErrorType.java](https://raw.githubusercontent.com/trqlmao/club.fernan.api/main/src/main/java/club/fernan/api/exception/ErrorType.java): Enum of error categories — switch on this rather than HTTP status codes.
-- [ReferralChoice.java](https://raw.githubusercontent.com/trqlmao/club.fernan.api/main/src/main/java/club/fernan/api/model/referral/ReferralChoice.java): Explicit caller decision type. Use `ReferralChoice.of(code)` or `ReferralChoice.none()` — never null-default.
-- [IntegrationSignal.java](https://raw.githubusercontent.com/trqlmao/club.fernan.api/main/src/main/java/club/fernan/api/integration/IntegrationSignal.java): Partner-attribution header set via `FernanClientBuilder.integration("my-app")`.
+- [ErrorType.java](https://raw.githubusercontent.com/trqlmao/club.fernan.api/main/src/main/java/club/fernan/api/exception/ErrorType.java): Error categories to switch on.
+- [ReferralChoice.java](https://raw.githubusercontent.com/trqlmao/club.fernan.api/main/src/main/java/club/fernan/api/model/referral/ReferralChoice.java): Required on every purchase: `of(code)` or `none()`.
+- [IntegrationSignal.java](https://raw.githubusercontent.com/trqlmao/club.fernan.api/main/src/main/java/club/fernan/api/integration/IntegrationSignal.java): Optional `X-Integration` header.
 
 ## Services
 
-- [UserService.java](https://raw.githubusercontent.com/trqlmao/club.fernan.api/main/src/main/java/club/fernan/api/service/UserService.java): `me`, `apiKey`, `regenerateApiKey` (silently updates client auth + fires `onApiKeyChange`), `redeemKey`.
+- [UserService.java](https://raw.githubusercontent.com/trqlmao/club.fernan.api/main/src/main/java/club/fernan/api/service/UserService.java): `me`, `apiKey`, `regenerateApiKey` (switches the client key and calls `onApiKeyChange`), `redeemKey`.
 - [StoreService.java](https://raw.githubusercontent.com/trqlmao/club.fernan.api/main/src/main/java/club/fernan/api/service/StoreService.java): `stock`, `cooldowns`, `purchase`, `purchases`, `purchaseDetail`, `validateReferral`.
 - [RefundService.java](https://raw.githubusercontent.com/trqlmao/club.fernan.api/main/src/main/java/club/fernan/api/service/RefundService.java): `create`, `cancel`, `list`, `get`.
-- [ReferralService.java](https://raw.githubusercontent.com/trqlmao/club.fernan.api/main/src/main/java/club/fernan/api/service/ReferralService.java): `create`, `list`, `stats`, `toggle`, `delete` (MediaPlus+ only).
+- [ReferralService.java](https://raw.githubusercontent.com/trqlmao/club.fernan.api/main/src/main/java/club/fernan/api/service/ReferralService.java): `create`, `list`, `stats`, `toggle`, `delete` (undocumented API).
 - [HealthService.java](https://raw.githubusercontent.com/trqlmao/club.fernan.api/main/src/main/java/club/fernan/api/service/HealthService.java): `get`, `simple`.
 
 ## Optional

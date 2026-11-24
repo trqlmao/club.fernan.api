@@ -12,8 +12,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Demonstrates handling the common transient-error cases — rate limiting,
- * cooldowns, and insufficient balance — with async retry chaining.
+ * Demonstrates handling the common transient errors, rate limiting and
+ * cooldowns, with async retry chaining.
  *
  * <p>This uses {@code .handle} + a scheduled retry rather than blocking
  * {@code Thread.sleep}, so the host application's threads stay free.
@@ -36,7 +36,7 @@ public final class ErrorHandlingExample {
                 .thenAccept(p -> System.out.println("Delivered: " + p.deliveredAmount()))
                 .exceptionally(t -> {
                     FernanException e = unwrap(t);
-                    System.err.println("Gave up: " + e.type() + " — " + e.getMessage());
+                    System.err.println("Gave up: " + e.type() + ": " + e.getMessage());
                     return null;
                 })
                 .whenComplete((__, ___) -> {
@@ -65,10 +65,6 @@ public final class ErrorHandlingExample {
                         }
                         case COOLDOWN -> {
                             System.out.println("On cooldown until " + e.cooldownEndsAt() + "; aborting.");
-                            yield CompletableFuture.<Purchase>failedFuture(e);
-                        }
-                        case INSUFFICIENT_BALANCE -> {
-                            System.out.println("Not enough balance — prompt user to top up.");
                             yield CompletableFuture.<Purchase>failedFuture(e);
                         }
                         default -> CompletableFuture.<Purchase>failedFuture(e);
