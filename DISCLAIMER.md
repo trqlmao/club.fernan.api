@@ -21,13 +21,10 @@ The maintainer does not:
   legal to sell, buy or use where you live;
 - handle orders, payments, refunds, balances or support.
 
-## Referral code
+## Referral codes
 
-Any fernan.club user can create referral codes. The maintainer has one, and
-fernan.club credits a percentage of a purchase to the owner of the code used. The
-code is not in this library or its examples. The library never adds a code to a
-purchase, and calls you make with it earn the maintainer nothing unless you enter
-that code yourself.
+The library contains no referral code and never adds one to a purchase. Any code
+used is one the caller passed in.
 
 ## Your responsibility
 
