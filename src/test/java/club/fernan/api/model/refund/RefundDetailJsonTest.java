@@ -16,7 +16,8 @@ class RefundDetailJsonTest {
         String json =
                 """
                 {"refund_id":"r1","purchase_id":"p1","discord_id":"123","product_id":1,
-                 "product_name":"X","requested_at":"2026-05-28T11:00:00Z","amount_to_refund":500,
+                 "product_name":"X","product_description":"Desc",
+                 "products":[{"mc_uuid":"u1","data":"YWJj","username":"foo"}],"requested_at":"2026-05-28T11:00:00Z","amount_to_refund":500,
                  "refund_reason":"bad","refunded_products":["u1","u2"],"status":"approved",
                  "status_code":1,"handled_by":"admin","handled_at":"2026-05-28T12:00:00Z",
                  "handled_reason":"valid","purchased_at":"2026-05-28T10:00:00Z"}
@@ -24,6 +25,8 @@ class RefundDetailJsonTest {
         RefundDetail d = gson.fromJson(json, RefundDetail.class);
         assertEquals("r1", d.refundId());
         assertEquals(2, d.refundedProducts().size());
+        assertEquals("Desc", d.productDescription());
+        assertEquals("u1", d.products().get(0).mcUuid());
         assertTrue(d.isHandled());
         assertFalse(d.isPending());
     }

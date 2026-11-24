@@ -3,14 +3,11 @@ package club.fernan.api.integration;
 import java.util.Objects;
 
 /**
- * Optional partner-identification signal sent with every request via the
- * {@code X-Integration} header. Lets fernan.club attribute traffic to a specific
- * integration (mod, client, third-party app) without granting referral revenue.
+ * Optional application name sent with every request in the {@code X-Integration} header.
+ * It carries no referral.
  *
  * <p>Set on the client via {@code FernanClientBuilder.integration("my-app")}.
- * The exact server-side handling is subject to change; the wrapper currently
- * sends it as a header so the call site stays stable when the upstream API
- * formalizes the field.
+ * The public API reference does not document this header, so the server may ignore it.
  *
  * @author trq
  * @since 0.1.0

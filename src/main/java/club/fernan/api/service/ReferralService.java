@@ -12,7 +12,8 @@ import java.util.concurrent.CompletableFuture;
 import lombok.RequiredArgsConstructor;
 
 /**
- * Referral-code management for creators (MediaPlus+).
+ * Referral-code management. The public API reference does not document these endpoints,
+ * so they may change without notice.
  *
  * <p>This service governs <em>owning</em> referral codes (creating, toggling,
  * deleting, viewing stats). To apply a referral code to a purchase, use
@@ -30,8 +31,8 @@ public final class ReferralService {
      * Create a new referral code.
      *
      * @param code            3-16 alphanumeric characters.
-     * @param maxUses         Max uses, or {@code null} for unlimited (Partner+).
-     * @param discountPercent Discount applied to redeemers (capped at 5% for non-admin).
+     * @param maxUses         Max uses, or {@code null} for unlimited.
+     * @param discountPercent Discount applied to redeemers. The server enforces the limit.
      * @param expiresInDays   Days until expiration, or {@code null} for no expiration.
      */
     public CompletableFuture<ReferralCode> create(

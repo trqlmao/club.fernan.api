@@ -38,7 +38,7 @@ public final class RefundService {
         return http.post("/store/refunds", body).thenApply(data -> http.gson().fromJson(data, RefundRequest.class));
     }
 
-    /** Cancel a pending refund request. */
+    /** Cancel a pending refund request. Not in the public API reference. */
     public CompletableFuture<Void> cancel(String refundId) {
         return http.post("/store/refunds/cancel", Map.of("refund_id", refundId)).thenApply(data -> null);
     }

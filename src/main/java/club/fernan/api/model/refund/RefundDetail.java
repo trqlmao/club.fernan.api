@@ -15,6 +15,8 @@ public record RefundDetail(
         @SerializedName("discord_id") String discordId,
         @SerializedName("product_id") int productId,
         @SerializedName("product_name") String productName,
+        @SerializedName("product_description") String productDescription,
+        @SerializedName("products") List<RefundProduct> products,
         @SerializedName("requested_at") String requestedAt,
         @SerializedName("amount_to_refund") long amountToRefund,
         @SerializedName("refund_reason") String refundReason,
@@ -34,4 +36,15 @@ public record RefundDetail(
     public boolean isPending() {
         return statusCode == 0;
     }
+
+    /**
+     * One delivered account in the refunded purchase.
+     *
+     * @author trq
+     * @since 0.4.0
+     */
+    public record RefundProduct(
+            @SerializedName("mc_uuid") String mcUuid,
+            @SerializedName("data") String data,
+            @SerializedName("username") String username) {}
 }

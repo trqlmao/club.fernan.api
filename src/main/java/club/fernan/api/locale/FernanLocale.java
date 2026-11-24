@@ -1,8 +1,7 @@
 package club.fernan.api.locale;
 
 /**
- * Supported response locales for endpoints that accept a {@code locale} query parameter
- * (currently {@code /store/stock} and {@code /store/cooldown}).
+ * Locales for translated product names and descriptions.
  *
  * @author trq
  * @since 0.1.0
@@ -11,7 +10,10 @@ public enum FernanLocale {
     EN("en"),
     ES("es"),
     DE("de"),
+    FR("fr"),
     JA("ja"),
+    PL("pl"),
+    RU("ru"),
     ZH("zh"),
     TW("tw");
 

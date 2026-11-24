@@ -16,7 +16,7 @@ import java.util.function.Consumer;
 public final class FernanClientBuilder {
 
     private static final String DEFAULT_BASE_URL = "https://api.fernan.club/api/v1";
-    private static final String DEFAULT_USER_AGENT = "club.fernan.api/0.2.0 (java)";
+    private static final String DEFAULT_USER_AGENT = "club.fernan.api/0.4.0 (java)";
     private static final int DEFAULT_CONNECT_TIMEOUT = 10_000;
 
     private String apiKey;
@@ -54,7 +54,7 @@ public final class FernanClientBuilder {
     }
 
     /**
-     * Identify the calling integration for partner-attribution tracking.
+     * Identify your application to the API.
      * Sent as the {@code X-Integration} header on every request.
      */
     public FernanClientBuilder integration(String id) {

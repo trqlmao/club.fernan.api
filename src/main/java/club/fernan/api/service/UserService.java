@@ -11,9 +11,6 @@ import lombok.RequiredArgsConstructor;
 /**
  * User-scoped endpoints: profile, API-key management, balance redemption.
  *
- * <p>Note: these endpoints are not currently in the public fernan.txt docs but are
- * verified against the live API as of 2026-05-28.
- *
  * @author trq
  * @since 0.1.0
  */

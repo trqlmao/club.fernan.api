@@ -24,7 +24,10 @@ public enum ErrorType {
     /** Requested resource was not found (HTTP 404). */
     NOT_FOUND,
 
-    /** Insufficient balance to complete the purchase. */
+    /**
+     * Insufficient balance. Not raised by this version: the API reference gives no way to tell
+     * this apart from other rejected purchases.
+     */
     INSUFFICIENT_BALANCE,
 
     /** Product purchase cooldown is currently active. See {@code cooldownEndsAt}. */
@@ -33,7 +36,7 @@ public enum ErrorType {
     /** Rate limit exceeded. See {@code retryAfter}. */
     RATE_LIMITED,
 
-    /** Resource conflict, e.g. a duplicate refund already exists (HTTP 409). */
+    /** Resource conflict, for example a duplicate refund (HTTP 409). */
     CONFLICT,
 
     /** Server-side error (HTTP 5xx). May include {@code errorId} for support. */

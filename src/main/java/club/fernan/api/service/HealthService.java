@@ -6,7 +6,7 @@ import java.util.concurrent.CompletableFuture;
 import lombok.RequiredArgsConstructor;
 
 /**
- * Health-check endpoints.
+ * Health-check endpoints. Not in the public API reference.
  *
  * @author trq
  * @since 0.1.0

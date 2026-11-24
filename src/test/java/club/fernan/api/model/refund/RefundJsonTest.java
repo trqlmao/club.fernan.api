@@ -27,7 +27,7 @@ class RefundJsonTest {
 
     @Test
     void status_helpers_case_insensitive() {
-        Refund r = new Refund("r", "p", "d", "n", "t", 0L, 0, "Approved", "t2");
+        Refund r = new Refund("r", "p", "d", "n", "desc", "t", 0L, 0, "Approved", "t2");
         assertTrue(r.isApproved());
         assertFalse(r.isPending());
         assertFalse(r.isDenied());

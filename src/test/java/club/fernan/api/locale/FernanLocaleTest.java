@@ -11,6 +11,9 @@ class FernanLocaleTest {
         assertEquals("en", FernanLocale.EN.code());
         assertEquals("es", FernanLocale.ES.code());
         assertEquals("de", FernanLocale.DE.code());
+        assertEquals("fr", FernanLocale.FR.code());
+        assertEquals("pl", FernanLocale.PL.code());
+        assertEquals("ru", FernanLocale.RU.code());
         assertEquals("ja", FernanLocale.JA.code());
         assertEquals("zh", FernanLocale.ZH.code());
         assertEquals("tw", FernanLocale.TW.code());

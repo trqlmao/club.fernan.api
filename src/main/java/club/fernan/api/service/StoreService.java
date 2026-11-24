@@ -95,7 +95,7 @@ public final class StoreService {
                 .thenApply(data -> http.gson().fromJson(data.getAsJsonObject("purchase"), PurchaseDetail.class));
     }
 
-    /** Validate a referral code against the server before applying it. */
+    /** Validate a referral code before applying it. Not in the public API reference. */
     public CompletableFuture<ReferralValidation> validateReferral(String code) {
         return http.post("/store/referral/validate", Map.of("code", code))
                 .thenApply(data -> http.gson().fromJson(data, ReferralValidation.class));

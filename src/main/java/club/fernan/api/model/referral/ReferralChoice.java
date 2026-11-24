@@ -8,8 +8,8 @@ package club.fernan.api.model.referral;
  * one of:
  *
  * <ul>
- *   <li>{@link #of(String) ReferralChoice.of("creator123")} — apply the given code</li>
- *   <li>{@link #none()} — deliberately apply no referral code</li>
+ *   <li>{@link #of(String) ReferralChoice.of("creator123")}: apply the given code</li>
+ *   <li>{@link #none()}: deliberately apply no referral code</li>
  * </ul>
  *
  * <p>The library never silently chooses a referral on the caller's behalf.

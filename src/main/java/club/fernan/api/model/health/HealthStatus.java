@@ -1,5 +1,6 @@
 package club.fernan.api.model.health;
 
+import com.google.gson.annotations.SerializedName;
 import java.util.Map;
 
 /**
@@ -8,7 +9,8 @@ import java.util.Map;
  * @author trq
  * @since 0.1.0
  */
-public record HealthStatus(String status, Map<String, String> services) {
+public record HealthStatus(
+        @SerializedName("status") String status, @SerializedName("services") Map<String, String> services) {
 
     public boolean isHealthy() {
         return "healthy".equalsIgnoreCase(status);

@@ -11,6 +11,7 @@ import com.google.gson.annotations.SerializedName;
 public record Cooldown(
         @SerializedName("product_id") int productId,
         @SerializedName("product_name") String productName,
+        @SerializedName("product_description") String productDescription,
         @SerializedName("category") String category,
         @SerializedName("remaining_allowed") int remainingAllowed,
         @SerializedName("cooldown_ends_at") String cooldownEndsAt,

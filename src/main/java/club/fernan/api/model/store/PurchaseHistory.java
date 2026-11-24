@@ -12,6 +12,7 @@ public record PurchaseHistory(
         @SerializedName("purchase_id") String purchaseId,
         @SerializedName("product_id") int productId,
         @SerializedName("product_name") String productName,
+        @SerializedName("product_description") String productDescription,
         @SerializedName("category") String category,
         @SerializedName("purchased_at") String purchasedAt,
         @SerializedName("amount") int amount,

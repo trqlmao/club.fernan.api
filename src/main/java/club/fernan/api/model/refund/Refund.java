@@ -13,6 +13,7 @@ public record Refund(
         @SerializedName("purchase_id") String purchaseId,
         @SerializedName("discord_id") String discordId,
         @SerializedName("product_name") String productName,
+        @SerializedName("product_description") String productDescription,
         @SerializedName("requested_at") String requestedAt,
         @SerializedName("amount_to_refund") long amountToRefund,
         @SerializedName("item_count") int itemCount,
