@@ -1,6 +1,8 @@
 package club.fernan.api.http;
 
 import club.fernan.api.auth.AuthProvider;
+import club.fernan.api.exception.ErrorType;
+import club.fernan.api.exception.FernanException;
 import club.fernan.api.integration.IntegrationSignal;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -11,6 +13,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
@@ -49,7 +52,7 @@ public final class JdkHttpTransport implements HttpTransport {
 
     /**
      * Construct with an optional caller-supplied executor. When {@code callerExecutor}
-     * is non-null, the transport will use it and skip its own pool — {@link #shutdown()}
+     * is non-null, the transport will use it and skip its own pool; {@link #shutdown()}
      * becomes a no-op and the caller owns the executor's lifecycle.
      *
      * @since 0.2.0
@@ -134,7 +137,13 @@ public final class JdkHttpTransport implements HttpTransport {
     private CompletableFuture<JsonObject> execute(HttpRequest request) {
         return httpClient
                 .sendAsync(request, HttpResponse.BodyHandlers.ofString())
+                .exceptionallyCompose(t -> CompletableFuture.failedFuture(networkFailure(t)))
                 .thenApply(ResponseHandler::handle);
+    }
+
+    private static FernanException networkFailure(Throwable t) {
+        Throwable cause = t instanceof CompletionException && t.getCause() != null ? t.getCause() : t;
+        return new FernanException("Request failed: " + cause, ErrorType.NETWORK, cause);
     }
 
     private static String stripTrailingSlash(String s) {
