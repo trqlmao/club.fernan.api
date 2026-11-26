@@ -17,7 +17,7 @@ repositories {
 }
 
 dependencies {
-    api("com.google.code.gson:gson:2.11.0")
+    api("com.google.code.gson:gson:2.15.0")
 
     compileOnly("org.projectlombok:lombok:1.18.48")
     annotationProcessor("org.projectlombok:lombok:1.18.48")
